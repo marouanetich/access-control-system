@@ -18,13 +18,12 @@ const AccessControl: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
-  // Reset visual state on mode change
   useEffect(() => {
     setAuthResult(null);
     setSimilarity(undefined);
     setStatus('IDLE');
     setMessage('');
-    setUsername(''); // Clear input for security
+    setUsername(''); 
     
     if (mode === 'REGISTER') {
       stopCamera();
@@ -61,7 +60,6 @@ const AccessControl: React.FC = () => {
     const ctx = canvasRef.current.getContext('2d');
     if (!ctx) return null;
 
-    // Capture & Process
     const video = videoRef.current;
     const outputW = 16;
     const outputH = 8;
@@ -76,7 +74,7 @@ const AccessControl: React.FC = () => {
       totalBrightness += gray;
     }
 
-    if ((totalBrightness / (outputW * outputH)) < 0.1) return null; // Too dark
+    if ((totalBrightness / (outputW * outputH)) < 0.1) return null; 
     return embedding;
   };
 
@@ -89,7 +87,6 @@ const AccessControl: React.FC = () => {
     setMessage(mode === 'VERIFY' ? 'Authenticating...' : 'Processing...');
 
     try {
-      // Small artificial delay for UX
       await new Promise(r => setTimeout(r, 600));
 
       if (mode === 'REGISTER') {
@@ -108,13 +105,12 @@ const AccessControl: React.FC = () => {
         setStatus('MATCH');
         setMessage('Biometrics Bound Successfully');
       } else {
-        // VERIFY
         const users = MockBackend.getUsers();
         const user = users.find(u => u.username === username);
         if(!user) throw new Error("Unknown Identity");
 
         const sig = captureBiometricSignature();
-        const input = sig || Array.from({length: 128}, () => Math.random()); // Fallback noise if mock cam fails
+        const input = sig || Array.from({length: 128}, () => Math.random());
         
         const result = await MockBackend.verifyUser(user.id, input);
         
@@ -157,20 +153,20 @@ const AccessControl: React.FC = () => {
       {/* Top Controls */}
       <div className="flex justify-between items-end mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-white tracking-tight">Access Control</h2>
+            <h2 className="text-2xl font-bold dark:text-white text-gray-900 tracking-tight">Access Control</h2>
             <p className="text-zinc-500 text-sm mt-1">Manage identities and enforce physical security policies.</p>
           </div>
           
           {/* Mode Selector */}
-          <div className="bg-zinc-900 p-1 rounded-lg border border-zinc-800 flex shadow-sm">
+          <div className="dark:bg-zinc-900 bg-white p-1 rounded-lg border dark:border-zinc-800 border-gray-200 flex shadow-sm">
             {(['VERIFY', 'ENROLL', 'REGISTER'] as const).map((m) => (
                 <button
                     key={m}
                     onClick={() => setMode(m)}
                     className={`px-6 py-2 rounded-md text-xs font-bold transition-all duration-200 ${
                         mode === m 
-                        ? 'bg-zinc-100 text-zinc-900 shadow-sm' 
-                        : 'text-zinc-500 hover:text-zinc-300'
+                        ? 'dark:bg-zinc-100 bg-gray-900 dark:text-zinc-900 text-white shadow-sm' 
+                        : 'text-zinc-500 hover:text-gray-700 dark:hover:text-zinc-300'
                     }`}
                 >
                     {m}
@@ -190,24 +186,24 @@ const AccessControl: React.FC = () => {
                       const active = idx <= currentStep();
                       return (
                           <div key={label} className="flex flex-col items-center">
-                              <div className={`w-2 h-2 rounded-full mb-1 transition-colors duration-300 ${active ? 'bg-emerald-500' : 'bg-zinc-800'}`}></div>
-                              <span className={`text-[10px] uppercase font-bold tracking-wider ${active ? 'text-zinc-300' : 'text-zinc-700'}`}>{label}</span>
+                              <div className={`w-2 h-2 rounded-full mb-1 transition-colors duration-300 ${active ? 'bg-emerald-500' : 'dark:bg-zinc-800 bg-gray-300'}`}></div>
+                              <span className={`text-[10px] uppercase font-bold tracking-wider ${active ? 'dark:text-zinc-300 text-gray-800' : 'text-zinc-500'}`}>{label}</span>
                           </div>
                       )
                   })}
               </div>
 
               {/* Input Card */}
-              <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6 shadow-sm flex flex-col space-y-5 relative overflow-hidden">
+              <div className="dark:bg-zinc-900/50 bg-white border dark:border-zinc-800 border-gray-200 rounded-xl p-6 shadow-sm flex flex-col space-y-5 relative overflow-hidden transition-colors">
                   
                   {/* Security Policy Banner */}
                   {mode === 'VERIFY' && (
                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-600"></div>
                   )}
 
-                  <div className="flex items-center space-x-3 text-zinc-100 mb-2">
-                     <div className="p-2 bg-zinc-800 rounded-lg">
-                        {mode === 'VERIFY' ? <Fingerprint size={20} className="text-emerald-400"/> : mode === 'REGISTER' ? <UserPlus size={20} className="text-indigo-400"/> : <ScanFace size={20} className="text-blue-400"/>}
+                  <div className="flex items-center space-x-3 dark:text-zinc-100 text-gray-900 mb-2">
+                     <div className="p-2 dark:bg-zinc-800 bg-gray-100 rounded-lg">
+                        {mode === 'VERIFY' ? <Fingerprint size={20} className="text-emerald-500"/> : mode === 'REGISTER' ? <UserPlus size={20} className="text-indigo-500"/> : <ScanFace size={20} className="text-blue-500"/>}
                      </div>
                      <div>
                          <h3 className="font-bold text-sm">{mode === 'VERIFY' ? 'Authentication' : mode === 'REGISTER' ? 'New Identity' : 'Enrollment'}</h3>
@@ -222,7 +218,7 @@ const AccessControl: React.FC = () => {
                     <input 
                         value={username}
                         onChange={e => setUsername(e.target.value)}
-                        className="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-4 py-3 text-sm text-white focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all placeholder:text-zinc-700 font-mono"
+                        className="w-full dark:bg-zinc-950 bg-gray-50 border dark:border-zinc-700 border-gray-300 rounded-lg px-4 py-3 text-sm dark:text-white text-gray-900 focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all placeholder:text-zinc-400 font-mono"
                         placeholder="e.g. j_doe"
                     />
                   </div>
@@ -234,7 +230,7 @@ const AccessControl: React.FC = () => {
                             <select 
                                 value={role} 
                                 onChange={(e) => setRole(e.target.value as any)}
-                                className="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-4 py-3 text-sm text-white focus:border-emerald-500 outline-none appearance-none"
+                                className="w-full dark:bg-zinc-950 bg-gray-50 border dark:border-zinc-700 border-gray-300 rounded-lg px-4 py-3 text-sm dark:text-white text-gray-900 focus:border-emerald-500 outline-none appearance-none"
                             >
                                 <option value="USER">Standard User (L1)</option>
                                 <option value="SECURITY_ENGINEER">Security Engineer (L2)</option>
@@ -260,7 +256,7 @@ const AccessControl: React.FC = () => {
                          <span>{status === 'SCANNING' ? 'Processing...' : mode === 'VERIFY' ? 'Scan & Verify' : mode === 'REGISTER' ? 'Create Record' : 'Capture Face'}</span>
                       </button>
                       {message && (
-                          <div className={`mt-3 p-2 rounded text-center text-xs font-mono border ${status === 'ERROR' ? 'bg-red-900/20 border-red-900/50 text-red-400' : 'bg-zinc-900 border-zinc-800 text-zinc-400'}`}>
+                          <div className={`mt-3 p-2 rounded text-center text-xs font-mono border ${status === 'ERROR' ? 'bg-red-900/20 border-red-900/50 text-red-400' : 'dark:bg-zinc-900 bg-gray-50 dark:border-zinc-800 border-gray-200 text-zinc-400'}`}>
                              {message}
                           </div>
                       )}
@@ -268,7 +264,7 @@ const AccessControl: React.FC = () => {
               </div>
 
               {/* Enterprise Footer Info */}
-              <div className="text-center text-[10px] text-zinc-600 mt-auto">
+              <div className="text-center text-[10px] text-zinc-500 mt-auto">
                  <p>SECURE GATEWAY NODE ID: SG-084-ALPHA</p>
                  <p>ENFORCEMENT: STRICT • LOGGING: ACTIVE</p>
               </div>
@@ -278,13 +274,14 @@ const AccessControl: React.FC = () => {
           <div className="lg:col-span-8 flex flex-col relative h-full min-h-[400px]">
              
              {/* Biometric Feed / Result Card */}
-             <div className="relative flex-1 bg-black rounded-xl overflow-hidden border border-zinc-800 shadow-2xl">
+             {/* Note: We keep the camera feed background dark/black as it emulates a video monitor, but the placeholder for register mode adapts */}
+             <div className="relative flex-1 bg-black rounded-xl overflow-hidden border dark:border-zinc-800 border-zinc-200 shadow-2xl">
                 
                 {mode === 'REGISTER' ? (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-600 bg-zinc-950">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-600 dark:bg-zinc-950 bg-gray-50 transition-colors">
                         <UserPlus size={64} className="mb-4 opacity-50" />
                         <h3 className="text-lg font-medium text-zinc-400">Registration Mode</h3>
-                        <p className="text-sm text-zinc-600">Biometric sensors are currently disabled.</p>
+                        <p className="text-sm text-zinc-500">Biometric sensors are currently disabled.</p>
                     </div>
                 ) : (
                     <>
@@ -298,7 +295,7 @@ const AccessControl: React.FC = () => {
                 {/* AUTHENTICATION RESULT OVERLAY */}
                 {authResult && (
                     <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/80 backdrop-blur-md animate-in fade-in zoom-in duration-300">
-                        <div className={`w-96 bg-zinc-900 rounded-xl overflow-hidden shadow-2xl border-2 transform transition-all duration-500 ${authResult.authorized ? 'border-emerald-500' : 'border-red-500'}`}>
+                        <div className={`w-96 dark:bg-zinc-900 bg-white rounded-xl overflow-hidden shadow-2xl border-2 transform transition-all duration-500 ${authResult.authorized ? 'border-emerald-500' : 'border-red-500'}`}>
                              {/* Card Header */}
                              <div className={`h-28 flex flex-col items-center justify-center ${authResult.authorized ? 'bg-emerald-600' : 'bg-red-600'}`}>
                                  {authResult.authorized ? <CheckCircle2 size={56} className="text-white drop-shadow-lg" /> : <ShieldCheck size={56} className="text-white drop-shadow-lg" />}
@@ -312,16 +309,16 @@ const AccessControl: React.FC = () => {
                                  {authResult.user ? (
                                      <div>
                                          <p className="text-xs text-zinc-500 uppercase tracking-widest font-bold mb-1">Identity Verified</p>
-                                         <p className="text-3xl text-white font-mono font-bold">{authResult.user.username}</p>
+                                         <p className="text-3xl dark:text-white text-gray-900 font-mono font-bold">{authResult.user.username}</p>
                                          <div className="flex justify-center mt-2">
-                                            <span className="px-3 py-1 bg-zinc-800 rounded-full text-xs text-zinc-300 border border-zinc-700 font-mono">
+                                            <span className="px-3 py-1 dark:bg-zinc-800 bg-gray-100 rounded-full text-xs dark:text-zinc-300 text-gray-700 border dark:border-zinc-700 border-gray-300 font-mono">
                                                 ROLE: {authResult.user.role}
                                             </span>
                                          </div>
                                      </div>
                                  ) : (
                                     <div>
-                                        <p className="text-sm text-zinc-300 font-bold">Biometric Verification Failed</p>
+                                        <p className="text-sm dark:text-zinc-300 text-gray-700 font-bold">Biometric Verification Failed</p>
                                         <p className="text-xs text-zinc-500 mt-2 leading-relaxed">
                                             The presented biometric data does not match any enrolled identity with sufficient confidence.
                                         </p>
@@ -329,7 +326,7 @@ const AccessControl: React.FC = () => {
                                  )}
 
                                  {!authResult.authorized && (
-                                     <div className="bg-red-900/20 border border-red-900/50 rounded p-3 text-xs text-red-400 font-mono mt-4">
+                                     <div className="bg-red-900/20 border border-red-900/50 rounded p-3 text-xs text-red-500 font-mono mt-4">
                                          Error Code: 0xBIO_MISMATCH
                                          <br/>Confidence Score: {(similarity || 0).toFixed(4)}
                                      </div>
@@ -337,8 +334,8 @@ const AccessControl: React.FC = () => {
                              </div>
                              
                              {/* Footer Action */}
-                             <div className="bg-zinc-950 p-4 border-t border-zinc-800 flex justify-center">
-                                 <button onClick={() => { setAuthResult(null); setStatus('IDLE'); }} className="text-xs text-zinc-400 hover:text-white flex items-center transition-colors">
+                             <div className="dark:bg-zinc-950 bg-gray-50 p-4 border-t dark:border-zinc-800 border-gray-200 flex justify-center">
+                                 <button onClick={() => { setAuthResult(null); setStatus('IDLE'); }} className="text-xs text-zinc-500 hover:text-zinc-800 dark:hover:text-white flex items-center transition-colors">
                                      <RefreshCcw size={12} className="mr-2" />
                                      RETURN TO SCANNER
                                  </button>

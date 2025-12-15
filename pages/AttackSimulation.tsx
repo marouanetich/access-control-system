@@ -80,11 +80,11 @@ const AttackSimulation: React.FC = () => {
     <div className="h-full flex flex-col space-y-4">
       
       {/* Educational Disclaimer Banner */}
-      <div className="bg-orange-900/20 border border-orange-700/50 rounded-lg p-3 flex items-center space-x-3">
+      <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-3 flex items-center space-x-3">
          <AlertOctagon className="text-orange-500" size={20} />
          <div>
-             <h4 className="text-sm font-bold text-orange-400">Educational Simulation Environment</h4>
-             <p className="text-xs text-orange-300/70">Use this sandbox to understand biometric vulnerabilities. All attacks are simulated locally. Do not attempt on production systems.</p>
+             <h4 className="text-sm font-bold text-orange-600 dark:text-orange-400">Educational Simulation Environment</h4>
+             <p className="text-xs text-orange-600/70 dark:text-orange-300/70">Use this sandbox to understand biometric vulnerabilities. All attacks are simulated locally. Do not attempt on production systems.</p>
          </div>
       </div>
 
@@ -94,10 +94,10 @@ const AttackSimulation: React.FC = () => {
         <div className="lg:w-1/2 flex flex-col space-y-6 overflow-hidden">
             
             {/* Header / Config */}
-            <div className="bg-zinc-900/50 border border-zinc-800 p-6 rounded-xl">
+            <div className="dark:bg-zinc-900/50 bg-white border dark:border-zinc-800 border-gray-200 p-6 rounded-xl shadow-sm transition-colors">
             <div className="flex items-center space-x-2 mb-4">
                 <Shield className="text-red-500" />
-                <h2 className="text-lg font-bold text-white">Adversary Emulation</h2>
+                <h2 className="text-lg font-bold dark:text-white text-gray-900">Adversary Emulation</h2>
             </div>
             
             <div className="grid grid-cols-2 gap-4">
@@ -106,7 +106,7 @@ const AttackSimulation: React.FC = () => {
                 <select 
                     value={targetUser} 
                     onChange={e => setTargetUser(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2.5 text-sm text-zinc-200 outline-none focus:border-red-500"
+                    className="w-full dark:bg-zinc-950 bg-gray-50 border dark:border-zinc-700 border-gray-300 rounded-lg p-2.5 text-sm dark:text-zinc-200 text-gray-900 outline-none focus:border-red-500"
                 >
                     {availableUsers.length === 0 && <option>No Users Found</option>}
                     {availableUsers.map(u => <option key={u.id} value={u.id}>{u.username} ({u.role})</option>)}
@@ -114,9 +114,9 @@ const AttackSimulation: React.FC = () => {
                 </div>
                 <div>
                 <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider block mb-2">Defense Profile</label>
-                <div className="flex bg-zinc-950 rounded-lg p-1 border border-zinc-700">
-                    <button onClick={() => setSecurityLevel('LOW')} className={`flex-1 py-1.5 text-xs font-bold rounded ${securityLevel === 'LOW' ? 'bg-red-500/20 text-red-400' : 'text-zinc-500'}`}>LOW</button>
-                    <button onClick={() => setSecurityLevel('HIGH')} className={`flex-1 py-1.5 text-xs font-bold rounded ${securityLevel === 'HIGH' ? 'bg-emerald-500/20 text-emerald-400' : 'text-zinc-500'}`}>HIGH</button>
+                <div className="flex dark:bg-zinc-950 bg-gray-50 rounded-lg p-1 border dark:border-zinc-700 border-gray-300">
+                    <button onClick={() => setSecurityLevel('LOW')} className={`flex-1 py-1.5 text-xs font-bold rounded ${securityLevel === 'LOW' ? 'bg-red-500/20 text-red-600 dark:text-red-400' : 'text-zinc-500'}`}>LOW</button>
+                    <button onClick={() => setSecurityLevel('HIGH')} className={`flex-1 py-1.5 text-xs font-bold rounded ${securityLevel === 'HIGH' ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'text-zinc-500'}`}>HIGH</button>
                 </div>
                 </div>
             </div>
@@ -128,23 +128,23 @@ const AttackSimulation: React.FC = () => {
                     <button
                         key={att.id}
                         onClick={() => setSelectedAttack(att.id)}
-                        className={`p-4 rounded-xl border text-left transition-all duration-200 group flex flex-col justify-between min-h-[100px] ${
+                        className={`p-4 rounded-xl border text-left transition-all duration-200 group flex flex-col justify-between min-h-[100px] shadow-sm ${
                             selectedAttack === att.id
-                            ? 'bg-red-600 text-white border-red-500 shadow-lg shadow-red-900/20'
-                            : 'bg-zinc-900/40 border-zinc-800 text-zinc-400 hover:bg-zinc-800 hover:border-zinc-700'
+                            ? 'bg-red-600 text-white border-red-500 shadow-red-900/20'
+                            : 'dark:bg-zinc-900/40 bg-white dark:border-zinc-800 border-gray-200 text-zinc-400 dark:hover:bg-zinc-800 hover:bg-gray-50 hover:border-gray-300'
                         }`}
                     >
-                        <att.icon size={20} className={`mb-2 ${selectedAttack === att.id ? 'text-white' : 'text-zinc-500 group-hover:text-red-400'}`} />
+                        <att.icon size={20} className={`mb-2 ${selectedAttack === att.id ? 'text-white' : 'text-zinc-500 group-hover:text-red-500'}`} />
                         <div>
-                            <div className="font-bold text-sm leading-tight">{att.label}</div>
-                            <div className={`text-[10px] mt-1 ${selectedAttack === att.id ? 'text-red-100' : 'text-zinc-600'}`}>{att.desc}</div>
+                            <div className={`font-bold text-sm leading-tight ${selectedAttack === att.id ? 'text-white' : 'dark:text-zinc-300 text-gray-700'}`}>{att.label}</div>
+                            <div className={`text-[10px] mt-1 ${selectedAttack === att.id ? 'text-red-100' : 'text-zinc-500'}`}>{att.desc}</div>
                         </div>
                     </button>
                 ))}
             </div>
 
             {/* Tactical Analysis Panel */}
-            <div className="bg-zinc-950 border border-zinc-800 rounded-lg p-4">
+            <div className="dark:bg-zinc-950 bg-white border dark:border-zinc-800 border-gray-200 rounded-lg p-4 shadow-sm">
                  <div className="flex items-center space-x-2 mb-2 text-zinc-400">
                      <Info size={14} />
                      <span className="text-xs font-bold uppercase">Tactical Defense Analysis</span>
@@ -152,7 +152,7 @@ const AttackSimulation: React.FC = () => {
                  <div className="text-xs text-zinc-500 h-10">
                      {selectedAttack ? (
                          <span>
-                            <strong className="text-zinc-300">Mitigation Strategy:</strong> {attacks.find(a => a.id === selectedAttack)?.mitigation}
+                            <strong className="dark:text-zinc-300 text-gray-800">Mitigation Strategy:</strong> {attacks.find(a => a.id === selectedAttack)?.mitigation}
                          </span>
                      ) : (
                          <span className="italic">Select an attack vector above to view specific mitigation strategies employed by the High Security profile.</span>
@@ -164,15 +164,15 @@ const AttackSimulation: React.FC = () => {
             <button
                 onClick={runAttack}
                 disabled={!selectedAttack || isRunning || availableUsers.length === 0}
-                className="w-full bg-zinc-100 hover:bg-white text-black py-4 rounded-lg font-bold shadow-lg shadow-white/5 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="w-full dark:bg-zinc-100 bg-gray-900 hover:bg-black dark:hover:bg-white text-white dark:text-black py-4 rounded-lg font-bold shadow-lg shadow-black/5 dark:shadow-white/5 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
                 {isRunning ? <RefreshCw className="animate-spin" size={18} /> : <Play size={18} fill="currentColor" />}
                 <span>{isRunning ? 'EXECUTION IN PROGRESS...' : 'EXECUTE ATTACK VECTOR'}</span>
             </button>
         </div>
 
-        {/* RIGHT: FORENSIC LOG */}
-        <div className="lg:w-1/2 bg-black rounded-xl border border-zinc-800 overflow-hidden flex flex-col shadow-2xl">
+        {/* RIGHT: FORENSIC LOG (Keep Dark Mode Aesthetic for Terminal) */}
+        <div className="lg:w-1/2 bg-black rounded-xl border dark:border-zinc-800 border-gray-800 overflow-hidden flex flex-col shadow-2xl">
             <div className="h-10 bg-zinc-900/50 border-b border-zinc-800 flex items-center px-4 justify-between">
                 <div className="flex items-center space-x-2 text-zinc-400">
                     <Terminal size={14} />

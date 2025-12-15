@@ -10,7 +10,6 @@ const SecurityLogs: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
 
-  // Auto-refresh logs every 2 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setLogs(MockBackend.getLogs());
@@ -18,7 +17,6 @@ const SecurityLogs: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Filter Logic
   const filteredLogs = logs.filter(log => {
     const matchesSeverity = filterSeverity === 'ALL' || log.severity === filterSeverity;
     const matchesType = filterType === 'ALL' || log.eventType === filterType;
@@ -29,7 +27,6 @@ const SecurityLogs: React.FC = () => {
     return matchesSeverity && matchesType && matchesSearch;
   });
 
-  // Export to CSV
   const handleExport = () => {
     const headers = ['Timestamp', 'Severity', 'Event Type', 'User', 'IP Address', 'Details'];
     const csvContent = [
@@ -66,9 +63,9 @@ const SecurityLogs: React.FC = () => {
   };
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-lg h-full flex flex-col">
+    <div className="dark:bg-zinc-900 bg-white border dark:border-zinc-800 border-gray-200 p-6 rounded-lg h-full flex flex-col shadow-sm">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 space-y-4 md:space-y-0">
-         <div className="flex items-center text-zinc-100">
+         <div className="flex items-center dark:text-zinc-100 text-gray-900">
             <Activity className="mr-3 text-emerald-500" />
             <div>
                 <h2 className="text-lg font-bold">Security Operations Center</h2>
@@ -79,13 +76,13 @@ const SecurityLogs: React.FC = () => {
          <div className="flex items-center space-x-3">
              <button 
                 onClick={() => setLogs(MockBackend.getLogs())}
-                className="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-2 rounded flex items-center border border-zinc-700"
+                className="text-xs dark:bg-zinc-800 bg-gray-100 hover:bg-gray-200 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-300 px-3 py-2 rounded flex items-center border dark:border-zinc-700 border-gray-300"
              >
                 Refresh
              </button>
              <button 
                 onClick={handleExport}
-                className="text-xs bg-blue-900/30 hover:bg-blue-900/50 text-blue-400 border border-blue-800 px-3 py-2 rounded flex items-center transition-colors"
+                className="text-xs bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900 px-3 py-2 rounded flex items-center transition-colors"
              >
                 <Download size={14} className="mr-2" />
                 Export CSV
@@ -111,13 +108,13 @@ const SecurityLogs: React.FC = () => {
                     placeholder="Search logs..." 
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full md:w-64 bg-zinc-950 border border-zinc-700 rounded pl-9 pr-4 py-1.5 text-xs text-zinc-200 focus:border-emerald-500 focus:outline-none"
+                    className="w-full md:w-64 dark:bg-zinc-950 bg-gray-50 border dark:border-zinc-700 border-gray-300 rounded pl-9 pr-4 py-1.5 text-xs dark:text-zinc-200 text-gray-900 focus:border-emerald-500 focus:outline-none"
                 />
             </div>
             <select 
                 value={filterSeverity}
                 onChange={(e) => setFilterSeverity(e.target.value)}
-                className="bg-zinc-950 border border-zinc-700 rounded px-2 py-1.5 text-xs text-zinc-300 focus:border-emerald-500 appearance-none outline-none"
+                className="dark:bg-zinc-950 bg-gray-50 border dark:border-zinc-700 border-gray-300 rounded px-2 py-1.5 text-xs dark:text-zinc-300 text-gray-900 focus:border-emerald-500 appearance-none outline-none"
             >
                 <option value="ALL">Severity: All</option>
                 <option value="INFO">Info</option>
@@ -128,9 +125,9 @@ const SecurityLogs: React.FC = () => {
       </div>
 
       {/* Table */}
-      <div className="flex-1 overflow-auto border border-zinc-800 rounded bg-zinc-950/50">
+      <div className="flex-1 overflow-auto border dark:border-zinc-800 border-gray-200 rounded dark:bg-zinc-950/50 bg-white">
         <table className="w-full text-left text-sm text-zinc-400">
-            <thead className="bg-zinc-950 text-zinc-500 uppercase text-xs sticky top-0 z-10 border-b border-zinc-800">
+            <thead className="dark:bg-zinc-950 bg-gray-50 text-zinc-500 uppercase text-xs sticky top-0 z-10 border-b dark:border-zinc-800 border-gray-200">
             <tr>
                 <th className="p-3 w-10"></th>
                 <th className="p-3 w-10"></th>
@@ -141,12 +138,12 @@ const SecurityLogs: React.FC = () => {
                 <th className="p-3">Details</th>
             </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-800 font-mono text-xs">
+            <tbody className="divide-y dark:divide-zinc-800 divide-gray-100 font-mono text-xs">
             {filteredLogs.length > 0 ? (
                 filteredLogs.map(log => (
                     <React.Fragment key={log.id}>
                         <tr 
-                            className={`hover:bg-zinc-800/50 transition-colors cursor-pointer ${expandedRow === log.id ? 'bg-zinc-800/30' : ''}`}
+                            className={`hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition-colors cursor-pointer ${expandedRow === log.id ? 'dark:bg-zinc-800/30 bg-blue-50/50' : ''}`}
                             onClick={() => toggleRow(log.id)}
                         >
                             <td className="p-3 text-center">{getSeverityIcon(log.severity)}</td>
@@ -156,27 +153,27 @@ const SecurityLogs: React.FC = () => {
                             <td className="p-3 text-zinc-500 whitespace-nowrap">{new Date(log.timestamp).toLocaleTimeString()}</td>
                             <td className="p-3">
                                 <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
-                                    log.eventType.includes('ATTACK') || log.eventType.includes('FAILURE') ? 'bg-red-900/20 border-red-900/50 text-red-400' :
-                                    log.eventType.includes('SUCCESS') ? 'bg-green-900/20 border-green-900/50 text-green-400' :
-                                    'bg-zinc-800 border-zinc-700 text-zinc-400'
+                                    log.eventType.includes('ATTACK') || log.eventType.includes('FAILURE') ? 'bg-red-900/20 border-red-500/20 text-red-500' :
+                                    log.eventType.includes('SUCCESS') ? 'bg-green-900/20 border-green-500/20 text-emerald-500' :
+                                    'dark:bg-zinc-800 bg-gray-200 dark:border-zinc-700 border-gray-300 dark:text-zinc-400 text-gray-600'
                                 }`}>
                                     {log.eventType}
                                 </span>
                             </td>
-                            <td className={`p-3 ${log.username ? 'text-zinc-300' : 'text-zinc-600 italic'}`}>
+                            <td className={`p-3 ${log.username ? 'dark:text-zinc-300 text-gray-800' : 'text-zinc-500 italic'}`}>
                                 {log.username || '-'}
                             </td>
-                            <td className="p-3 text-blue-400/80">{log.sourceIp}</td>
-                            <td className="p-3 text-zinc-300 max-w-xs truncate" title={log.details}>
+                            <td className="p-3 text-blue-500/80">{log.sourceIp}</td>
+                            <td className="p-3 dark:text-zinc-300 text-gray-600 max-w-xs truncate" title={log.details}>
                                 {log.details}
                             </td>
                         </tr>
                         {/* Expanded Details Row */}
                         {expandedRow === log.id && (
-                            <tr className="bg-zinc-900/50">
-                                <td colSpan={7} className="p-4 border-b border-zinc-800">
-                                    <div className="bg-black border border-zinc-800 rounded p-3 text-zinc-400 font-mono text-xs whitespace-pre-wrap">
-                                        <div className="flex justify-between text-zinc-600 mb-2 uppercase font-bold text-[10px]">
+                            <tr className="dark:bg-zinc-900/50 bg-gray-50">
+                                <td colSpan={7} className="p-4 border-b dark:border-zinc-800 border-gray-200">
+                                    <div className="dark:bg-black bg-white border dark:border-zinc-800 border-gray-300 rounded p-3 dark:text-zinc-400 text-gray-700 font-mono text-xs whitespace-pre-wrap">
+                                        <div className="flex justify-between text-zinc-500 mb-2 uppercase font-bold text-[10px]">
                                             <span>Full Log Record</span>
                                             <span>ID: {log.id}</span>
                                         </div>
@@ -189,7 +186,7 @@ const SecurityLogs: React.FC = () => {
                 ))
             ) : (
                 <tr>
-                    <td colSpan={7} className="p-8 text-center text-zinc-600">
+                    <td colSpan={7} className="p-8 text-center text-zinc-500">
                         No logs match current filters.
                     </td>
                 </tr>
@@ -197,7 +194,7 @@ const SecurityLogs: React.FC = () => {
             </tbody>
         </table>
       </div>
-      <div className="mt-4 text-xs text-zinc-600 flex justify-between">
+      <div className="mt-4 text-xs text-zinc-500 flex justify-between">
           <span>Total Records: {logs.length}</span>
           <span>Showing: {filteredLogs.length}</span>
       </div>

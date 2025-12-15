@@ -27,7 +27,7 @@ const BiometricVisualizer: React.FC<BiometricVisualizerProps> = ({ state, score,
   const statusText = state === 'IDLE' ? 'READY' : state;
 
   return (
-    <div className={`relative w-full h-full min-h-[300px] overflow-hidden flex items-center justify-center ${!transparent ? 'bg-zinc-950 border border-zinc-800 rounded-lg' : ''}`}>
+    <div className={`relative w-full h-full min-h-[300px] overflow-hidden flex items-center justify-center ${!transparent ? 'dark:bg-zinc-950 bg-gray-50 border dark:border-zinc-800 border-gray-200 rounded-lg' : ''}`}>
       
       {/* Scanning Line Animation */}
       {state === 'SCANNING' && (
@@ -79,13 +79,13 @@ const BiometricVisualizer: React.FC<BiometricVisualizerProps> = ({ state, score,
 
       {/* Info Overlay */}
       <div className="absolute bottom-6 left-0 right-0 flex justify-center z-30">
-         <div className="bg-zinc-900/90 border border-zinc-700 backdrop-blur px-4 py-2 rounded-full flex items-center space-x-3 shadow-xl">
+         <div className="dark:bg-zinc-900/90 bg-white/90 border dark:border-zinc-700 border-gray-200 backdrop-blur px-4 py-2 rounded-full flex items-center space-x-3 shadow-xl">
             <div className={`w-2 h-2 rounded-full ${state === 'SCANNING' ? 'bg-blue-500 animate-pulse' : state === 'MATCH' ? 'bg-emerald-500' : state === 'NO_MATCH' ? 'bg-red-500' : 'bg-zinc-500'}`}></div>
-            <span className="font-mono text-xs font-bold text-zinc-200 tracking-wider">{statusText}</span>
+            <span className="font-mono text-xs font-bold dark:text-zinc-200 text-gray-800 tracking-wider">{statusText}</span>
             {score !== undefined && (
                  <>
-                    <div className="w-px h-3 bg-zinc-700"></div>
-                    <span className={`font-mono text-xs ${score > 0.8 ? 'text-emerald-400' : 'text-zinc-400'}`}>
+                    <div className="w-px h-3 dark:bg-zinc-700 bg-gray-300"></div>
+                    <span className={`font-mono text-xs ${score > 0.8 ? 'text-emerald-500' : 'text-zinc-500'}`}>
                         CONF: {(score * 100).toFixed(1)}%
                     </span>
                  </>

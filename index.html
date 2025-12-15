@@ -1,10 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BioSec Architect - Biometric Security Suite</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+      }
+    </script>
     <style>
       /* Custom scrollbar for the hacker aesthetic */
       ::-webkit-scrollbar {
@@ -12,7 +17,7 @@
         height: 8px;
       }
       ::-webkit-scrollbar-track {
-        background: #18181b; 
+        background: transparent; 
       }
       ::-webkit-scrollbar-thumb {
         background: #3f3f46; 
@@ -20,6 +25,9 @@
       }
       ::-webkit-scrollbar-thumb:hover {
         background: #52525b; 
+      }
+      .dark ::-webkit-scrollbar-track {
+        background: #18181b;
       }
       .scan-line {
         position: absolute;
@@ -49,7 +57,7 @@
 </script>
 <link rel="stylesheet" href="/index.css">
 </head>
-  <body class="bg-zinc-950 text-zinc-200 overflow-hidden">
+  <body class="bg-gray-50 dark:bg-zinc-950 text-gray-900 dark:text-zinc-200 overflow-hidden transition-colors duration-300">
     <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>
