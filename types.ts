@@ -6,6 +6,7 @@ export interface BiometricTemplate {
   salt: string; // Random salt per user to prevent Rainbow Table attacks
   encryptedData: string; // Simulated encrypted blob (AES-256-GCM)
   embedding: number[]; // Decrypted in memory ONLY during matching
+  webAuthnCredentialId?: string; // For Windows Hello / WebAuthn
   createdAt: string;
 }
 
@@ -20,7 +21,7 @@ export interface User {
 export interface SecurityLog {
   id: string;
   timestamp: string;
-  eventType: 'AUTH_SUCCESS' | 'AUTH_FAILURE' | 'ENROLLMENT' | 'ATTACK_DETECTED' | 'SYSTEM_ALERT' | 'CONFIG_CHANGE' | 'RATE_LIMIT_EXCEEDED' | 'BIOMETRIC_IMPERSONATION_LOCKOUT' | 'SYSTEM_SECURITY_LOCKDOWN' | 'CAMERA_QUALITY_FAILURE';
+  eventType: 'AUTH_SUCCESS' | 'AUTH_FAILURE' | 'ENROLLMENT' | 'ATTACK_DETECTED' | 'SYSTEM_ALERT' | 'CONFIG_CHANGE' | 'RATE_LIMIT_EXCEEDED' | 'BIOMETRIC_IMPERSONATION_LOCKOUT' | 'SYSTEM_SECURITY_LOCKDOWN' | 'CAMERA_QUALITY_FAILURE' | 'FINGERPRINT_ENROLL' | 'FINGERPRINT_AUTH_SUCCESS' | 'FINGERPRINT_AUTH_FAILURE';
   severity: 'INFO' | 'WARNING' | 'CRITICAL';
   details: string;
   sourceIp: string;

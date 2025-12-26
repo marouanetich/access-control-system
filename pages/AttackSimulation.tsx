@@ -79,15 +79,6 @@ const AttackSimulation: React.FC = () => {
   return (
     <div className="h-full flex flex-col space-y-4">
       
-      {/* Educational Disclaimer Banner */}
-      <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-3 flex items-center space-x-3">
-         <AlertOctagon className="text-orange-500" size={20} />
-         <div>
-             <h4 className="text-sm font-bold text-orange-600 dark:text-orange-400">Educational Simulation Environment</h4>
-             <p className="text-xs text-orange-600/70 dark:text-orange-300/70">Use this sandbox to understand biometric vulnerabilities. All attacks are simulated locally. Do not attempt on production systems.</p>
-         </div>
-      </div>
-
       <div className="flex-1 flex flex-col lg:flex-row gap-6 min-h-0">
         
         {/* LEFT: CONFIGURATION & VECTORS */}

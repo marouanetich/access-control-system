@@ -199,7 +199,7 @@ export const MockBackend = {
     return newUser;
   },
 
-  enrollUser: async (userId: string, customEmbedding?: number[]): Promise<BiometricTemplate> => {
+  enrollUser: async (userId: string, customEmbedding?: number[], algorithm: 'FaceID_v4' | 'Fingerprint_SHA256' = 'FaceID_v4'): Promise<BiometricTemplate> => {
     if (checkSystemLock().locked) throw new Error("SYSTEM LOCKED: Enrollment Denied.");
 
     await new Promise(r => setTimeout(r, 800));
@@ -207,7 +207,8 @@ export const MockBackend = {
     if (!user) throw new Error("User not found");
 
     const embedding = customEmbedding || generateEmbedding();
-    if (calculateVariance(embedding) < 0.05) throw new Error("Biometric Quality Low: Image too uniform.");
+    // Only check variance for FaceID, assume Fingerprint (mock) is always valid/handled by UI
+    if (algorithm === 'FaceID_v4' && calculateVariance(embedding) < 0.05) throw new Error("Biometric Quality Low: Image too uniform.");
 
     const salt = Math.random().toString(36).substring(2);
     const hash = secureHash(embedding, salt);
@@ -215,7 +216,7 @@ export const MockBackend = {
     const template: BiometricTemplate = {
       id: `tmpl_${Date.now()}`,
       userId: user.id,
-      algorithm: 'FaceID_v4',
+      algorithm: algorithm,
       embedding: embedding,
       encryptedData: `AES256::${hash.substring(0, 8)}...`,
       dataHash: hash,
@@ -226,14 +227,30 @@ export const MockBackend = {
     user.biometricTemplate = template;
     user.enrolled = true;
     MockBackend.logEvent({
-      eventType: 'ENROLLMENT',
+      eventType: algorithm === 'Fingerprint_SHA256' ? 'FINGERPRINT_ENROLL' : 'ENROLLMENT',
       severity: 'INFO',
-      details: `User ${user.username} enrolled. Template Hashed & Salted.`,
+      details: `User ${user.username} enrolled with ${algorithm}. Template Hashed & Salted.`,
       sourceIp: '192.168.1.10',
       userId: user.id,
       username: user.username
     });
     return template;
+  },
+
+  // --- WEBAUTHN HELPERS ---
+  getWebAuthnChallenge: () => {
+    return new Uint8Array(32).map(() => Math.floor(Math.random() * 256));
+  },
+
+  registerWebAuthnCredential: async (userId: string, credentialId: string) => {
+    const user = users.find(u => u.id === userId);
+    if (!user) throw new Error("User not found");
+
+    // We treat this as "enrolling" with a special flag
+    await MockBackend.enrollUser(userId, [], 'Fingerprint_SHA256');
+    if (user.biometricTemplate) {
+      user.biometricTemplate.webAuthnCredentialId = credentialId;
+    }
   },
 
   // --- AUTHENTICATION ENGINE ---
@@ -248,7 +265,7 @@ export const MockBackend = {
     });
   },
 
-  verifyUser: async (userId: string, inputEmbedding?: number[], thresholdOverride?: number, contextIp = '192.168.1.10', isAttack = false): Promise<AuthResponse> => {
+  verifyUser: async (userId: string, inputEmbedding?: number[], thresholdOverride?: number, contextIp = '192.168.1.10', isAttack = false, method: 'FACE' | 'FINGERPRINT' = 'FACE'): Promise<AuthResponse> => {
 
     // 0. GLOBAL SYSTEM LOCK CHECK
     const lockStatus = checkSystemLock();
@@ -278,7 +295,7 @@ export const MockBackend = {
 
     if (!user || !user.biometricTemplate) {
       MockBackend.logEvent({
-        eventType: 'AUTH_FAILURE',
+        eventType: method === 'FINGERPRINT' ? 'FINGERPRINT_AUTH_FAILURE' : 'AUTH_FAILURE',
         severity: 'WARNING',
         details: `Identity Check Failed: ${userId}`,
         sourceIp: contextIp,
@@ -287,9 +304,27 @@ export const MockBackend = {
       return { success: false, message: 'Identity not found or not enrolled', similarityScore: 0 };
     }
 
-    // 2. LIVENESS CHECK
+    // CHECK ALGORITHM MATCH
+    const expectedAlgo = method === 'FINGERPRINT' ? 'Fingerprint_SHA256' : 'FaceID_v4';
+    if (user.biometricTemplate.algorithm !== expectedAlgo) {
+      return { success: false, message: `Biometric Mismatch: User enrolled with ${user.biometricTemplate.algorithm}, tried ${method}`, similarityScore: 0 };
+    }
+
+    // WEBAUTHN CHECK
+    if (method === 'FINGERPRINT' && user.biometricTemplate.webAuthnCredentialId) {
+      // In a real app, we would verify the signature against the public key.
+      // For this mock, if the client sends a matching credentialId (simulated by non-empty input), we assume success via browser.
+      // We trust the client has successfully completed navigator.credentials.get() if they are calling this.
+      if (!inputEmbedding || inputEmbedding.length === 0) {
+        return { success: false, message: 'WebAuthn Verification Failed', similarityScore: 0 };
+      }
+      // Force high score for WebAuthn success
+      return MockBackend.finalizeAuth(user, 0.99, contextIp, method, isAttack);
+    }
+
+    // 2. LIVENESS CHECK (Skip for Fingerprint in this simulation, or simplify)
     if (!inputEmbedding) return { success: false, message: 'No biometric data', similarityScore: 0 };
-    if (calculateVariance(inputEmbedding) < 0.02) {
+    if (method === 'FACE' && calculateVariance(inputEmbedding) < 0.02) {
       MockBackend.logEvent({
         eventType: 'AUTH_FAILURE',
         severity: 'WARNING',
@@ -317,6 +352,11 @@ export const MockBackend = {
 
     // 4. MATCHING ENGINE
     const score = calculateSimilarity(inputEmbedding, user.biometricTemplate.embedding);
+    return MockBackend.finalizeAuth(user, score, contextIp, method, isAttack);
+  },
+
+  finalizeAuth: (user: User, score: number, contextIp: string, method: string, isAttack: boolean): AuthResponse => {
+    const threshold = GLOBAL_THRESHOLD;
     const isMatch = score >= threshold;
 
     if (isMatch) {
@@ -340,7 +380,7 @@ export const MockBackend = {
         MockBackend.logEvent({
           eventType: 'SYSTEM_SECURITY_LOCKDOWN',
           severity: 'CRITICAL',
-          details: `GLOBAL LOCKDOWN TRIGGERED: Identity '${user.username}' failed ${newFails} consecutive checks. Suspected impersonation attack. System frozen for ${SYSTEM_LOCKDOWN_MS / 1000}s.`,
+          details: `GLOBAL LOCKDOWN TRIGGERED: Identity '${user.username}' failed ${newFails} consecutive checks (${method}). Suspected impersonation attack. System frozen for ${SYSTEM_LOCKDOWN_MS / 1000}s.`,
           sourceIp: contextIp,
           userId: user.id,
           username: user.username,
@@ -369,9 +409,9 @@ export const MockBackend = {
       };
 
       MockBackend.logEvent({
-        eventType: 'AUTH_SUCCESS',
+        eventType: method === 'FINGERPRINT' ? 'FINGERPRINT_AUTH_SUCCESS' : 'AUTH_SUCCESS',
         severity: 'INFO',
-        details: `Access Granted: ${user.username} (Score: ${score.toFixed(4)})`,
+        details: `Access Granted: ${user.username} [${method}] (Score: ${score.toFixed(4)})`,
         sourceIp: contextIp,
         userId: user.id,
         username: user.username
@@ -387,9 +427,9 @@ export const MockBackend = {
       };
     } else {
       MockBackend.logEvent({
-        eventType: 'AUTH_FAILURE',
+        eventType: method === 'FINGERPRINT' ? 'FINGERPRINT_AUTH_FAILURE' : 'AUTH_FAILURE',
         severity: 'WARNING',
-        details: `Biometric Mismatch: ${user.username} (Score: ${score.toFixed(4)})`,
+        details: `Biometric Mismatch [${method}]: ${user.username} (Score: ${score.toFixed(4)})`,
         sourceIp: contextIp,
         userId: user.id,
         username: user.username
