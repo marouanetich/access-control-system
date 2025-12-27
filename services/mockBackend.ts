@@ -560,6 +560,22 @@ export const MockBackend = {
       ...log
     };
     logs = [newLog, ...logs].slice(0, 100);
+
+    // Forward to Real Backend (Background, fire-and-forget)
+    // Avoid circular import issues if possible, but here we likely need API.
+    // Importing dynamically or assuming integration at call sites is cleaner, 
+    // but patching here guarantees coverage.
+    fetch('http://localhost:8000/api/logs/external', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        eventType: log.eventType,
+        severity: log.severity,
+        details: log.details,
+        username: log.username,
+        sourceIp: log.sourceIp
+      })
+    }).catch(e => console.warn("Failed to sync log to backend", e));
   },
 
   getLogs: () => logs,

@@ -187,6 +187,15 @@ const AccessControl: React.FC = () => {
 
                         if (!credential) throw new Error("WebAuthn Setup Cancelled");
                         await MockBackend.registerWebAuthnCredential(user.id, credential.id);
+
+                        await BackendAPI.logEvent({
+                            eventType: 'ENROLL_FINGERPRINT',
+                            severity: 'INFO',
+                            details: 'Windows Hello credential registered',
+                            username: user.username,
+                            sourceIp: 'CLIENT_WEBAUTHN'
+                        });
+
                         setStatus('MATCH');
                         setMessage('Windows Hello Linked');
                     } catch (err: any) {
@@ -253,7 +262,14 @@ const AccessControl: React.FC = () => {
                         // Convert WebAuthn errors to auth failures
                         setStatus('ERROR');
                         setMessage("Windows Hello Error: " + err.message);
-                        // Log failed attempt if it was a real mismatch (hard to distinguish in frontend without more logic, assuming cancel/timeout is not a security fail for now, but strict mode might count it)
+
+                        await BackendAPI.logEvent({
+                            eventType: 'AUTH_FAILURE_WEBAUTHN',
+                            severity: 'WARNING',
+                            details: `Windows Hello Error: ${err.message}`,
+                            username: user.username,
+                            sourceIp: 'CLIENT_WEBAUTHN'
+                        });
                     }
                 } else {
                     // FACE AUTH (Server-Side)

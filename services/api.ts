@@ -68,12 +68,29 @@ export const BackendAPI = {
         // But usually fetch doesn't throw on 4xx.
         // If it's a "known" failure (like liveness), the backend returns 200 with authorized=False usually? 
         // My backend returns authorized=False in JSON for logic failures, but HTTP exceptions for errors.
-        
+
         if (!res.ok) {
-           // If HTTP error (like 403 Replay, or 400 Bad Request), throw it
-           throw new Error(data.detail || "Verification Error");
+            // If HTTP error (like 403 Replay, or 400 Bad Request), throw it
+            throw new Error(data.detail || "Verification Error");
         }
-        
+
         return data;
+    },
+    async getLogs(): Promise<any[]> {
+        const res = await fetch(`${API_URL}/api/logs`);
+        if (!res.ok) throw new Error("Failed to fetch logs");
+        return res.json();
+    },
+
+    async logEvent(entry: { eventType: string; severity: string; details: string; username?: string; sourceIp: string }): Promise<void> {
+        try {
+            await fetch(`${API_URL}/api/logs/external`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(entry)
+            });
+        } catch (e) {
+            console.warn("Failed to push audit log:", e);
+        }
     }
 };
