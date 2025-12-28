@@ -27,6 +27,53 @@ const App: React.FC = () => {
   React.useEffect(() => {
     // Focus the container on mount to enable arrow key navigation immediately
     containerRef.current?.focus();
+
+    // Function to enter fullscreen
+    const enterFullscreen = async () => {
+      try {
+        const element = document.documentElement;
+        if (element.requestFullscreen) {
+          await element.requestFullscreen();
+        } else if ((element as any).webkitRequestFullscreen) {
+          // Safari
+          await (element as any).webkitRequestFullscreen();
+        } else if ((element as any).mozRequestFullScreen) {
+          // Firefox
+          await (element as any).mozRequestFullScreen();
+        } else if ((element as any).msRequestFullscreen) {
+          // IE/Edge
+          await (element as any).msRequestFullscreen();
+        }
+      } catch (error) {
+        // Fullscreen requires user interaction
+        console.log('Fullscreen requires user interaction');
+      }
+    };
+
+    // Check if we should auto-enter fullscreen (on first load/reload)
+    const shouldAutoFullscreen = !sessionStorage.getItem('fullscreenPrompted');
+    
+    // Handler for first user interaction to enter fullscreen
+    const handleFirstInteraction = async () => {
+      if (shouldAutoFullscreen) {
+        await enterFullscreen();
+        sessionStorage.setItem('fullscreenPrompted', 'true');
+        // Remove listeners after first interaction
+        document.removeEventListener('click', handleFirstInteraction);
+        document.removeEventListener('keydown', handleFirstInteraction);
+      }
+    };
+
+    // Add listeners for first interaction
+    if (shouldAutoFullscreen) {
+      document.addEventListener('click', handleFirstInteraction, { once: true });
+      document.addEventListener('keydown', handleFirstInteraction, { once: true });
+    }
+
+    return () => {
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('keydown', handleFirstInteraction);
+    };
   }, []);
 
   useEffect(() => {
@@ -78,6 +125,14 @@ const App: React.FC = () => {
       } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
         e.preventDefault();
         handlePrevious();
+      } else if (e.key === 'F11') {
+        e.preventDefault();
+        // Toggle fullscreen on F11
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen().catch(() => {});
+        }
       }
     };
 

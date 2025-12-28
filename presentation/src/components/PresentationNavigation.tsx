@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronUp, ChevronDown, HelpCircle, X } from 'lucide-react';
+import { ChevronUp, ChevronDown, HelpCircle, X, Maximize, Minimize } from 'lucide-react';
 import gsap from 'gsap';
 
 interface PresentationNavigationProps {
@@ -17,10 +17,58 @@ const PresentationNavigation: React.FC<PresentationNavigationProps> = ({
 }) => {
     const [showHelp, setShowHelp] = useState(false);
     const [progress, setProgress] = useState(0);
+    const [isFullscreen, setIsFullscreen] = useState(false);
 
     useEffect(() => {
         setProgress((currentSlide / totalSlides) * 100);
     }, [currentSlide, totalSlides]);
+
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            setIsFullscreen(!!document.fullscreenElement);
+        };
+
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+        document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+        return () => {
+            document.removeEventListener('fullscreenchange', handleFullscreenChange);
+            document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+            document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+            document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+        };
+    }, []);
+
+    const toggleFullscreen = async () => {
+        try {
+            if (!document.fullscreenElement) {
+                const element = document.documentElement;
+                if (element.requestFullscreen) {
+                    await element.requestFullscreen();
+                } else if ((element as any).webkitRequestFullscreen) {
+                    await (element as any).webkitRequestFullscreen();
+                } else if ((element as any).mozRequestFullScreen) {
+                    await (element as any).mozRequestFullScreen();
+                } else if ((element as any).msRequestFullscreen) {
+                    await (element as any).msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    await document.exitFullscreen();
+                } else if ((document as any).webkitExitFullscreen) {
+                    await (document as any).webkitExitFullscreen();
+                } else if ((document as any).mozCancelFullScreen) {
+                    await (document as any).mozCancelFullScreen();
+                } else if ((document as any).msExitFullscreen) {
+                    await (document as any).msExitFullscreen();
+                }
+            }
+        } catch (error) {
+            console.error('Error toggling fullscreen:', error);
+        }
+    };
 
     useEffect(() => {
         const handleKeyPress = (e: KeyboardEvent) => {
@@ -99,6 +147,10 @@ const PresentationNavigation: React.FC<PresentationNavigationProps> = ({
                                 <span className="text-slate-700">Fermer l'aide</span>
                                 <kbd className="px-3 py-1 bg-white border border-slate-200 rounded text-sm font-mono">Esc</kbd>
                             </div>
+                            <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
+                                <span className="text-slate-700">Plein écran</span>
+                                <kbd className="px-3 py-1 bg-white border border-slate-200 rounded text-sm font-mono">F11</kbd>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -111,6 +163,19 @@ const PresentationNavigation: React.FC<PresentationNavigationProps> = ({
                 aria-label="Show help"
             >
                 <HelpCircle size={20} className="text-slate-700" />
+            </button>
+
+            {/* Fullscreen Toggle Button */}
+            <button
+                onClick={toggleFullscreen}
+                className="fixed top-8 right-8 p-3 rounded-full bg-white/90 backdrop-blur-sm border border-slate-200 shadow-lg hover:bg-white hover:scale-110 transition-all z-50"
+                aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+            >
+                {isFullscreen ? (
+                    <Minimize size={20} className="text-slate-700" />
+                ) : (
+                    <Maximize size={20} className="text-slate-700" />
+                )}
             </button>
         </>
     );

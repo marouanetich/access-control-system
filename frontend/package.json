@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "lucide-react": "^0.561.0",
+    "puppeteer": "^24.34.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "recharts": "^3.5.1"
