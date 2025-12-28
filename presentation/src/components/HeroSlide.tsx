@@ -75,12 +75,12 @@ const HeroSlide: React.FC = () => {
             </div>
 
             {/* Subtle Grid Pattern */}
-            <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
-                 style={{ backgroundImage: 'linear-gradient(to right, #000 1px, transparent 1px), linear-gradient(to bottom, #000 1px, transparent 1px)', backgroundSize: '50px 50px' }}></div>
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                style={{ backgroundImage: 'linear-gradient(to right, #000 1px, transparent 1px), linear-gradient(to bottom, #000 1px, transparent 1px)', backgroundSize: '50px 50px' }}></div>
 
             <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 py-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-                    
+
                     {/* LEFT SECTION: Project Info */}
                     <div ref={leftRef} className="space-y-8">
                         {/* Project Badge */}
@@ -103,7 +103,7 @@ const HeroSlide: React.FC = () => {
                                 <p className="text-blue-600/70 text-xs font-bold tracking-[0.3em] uppercase mb-4">Réalisé par</p>
                                 <div className="space-y-3">
                                     <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.1]">
-                                        MAROUANE<br />BOUKAR
+                                        MAROUANE<br />ABOUKAR
                                     </h2>
                                     <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.1] italic">
                                         MOHAMED-TAHA<br />TAHIRI-EL ALAOUI

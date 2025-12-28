@@ -80,7 +80,7 @@ export const slides: SlideConfig[] = [
             subtitle: 'SYSTÈME D\'ACCÈS BIOMÉTRIQUE',
             description: [
                 'Projet de fin de module : Sécurité Physique',
-                'Présenté par : MAROUANE BOUKAR & MOHAMED-TAHA TAHIRI-EL ALAOUI',
+                'Présenté par : MAROUANE ABOUKAR & MOHAMED-TAHA TAHIRI-EL ALAOUI',
                 'Encadré par : Mme Soukayna RIFFI BOUALAM'
             ]
         }
@@ -280,35 +280,35 @@ export const slides: SlideConfig[] = [
             title: 'Fonctionnalités Additionnelles',
             subtitle: 'Simulation, Audit, et Dashboard SOC',
             gridItems: [
-                { 
-                    icon: Activity, 
-                    title: "Moteur de Simulation", 
-                    desc: "ThreatService exécute 6 types d'attaques (Replay, Tampering, Brute Force, Threshold Manipulation, Unauthorized Enrollment, Session Hijacking) - backend/threat_service.py" 
+                {
+                    icon: Activity,
+                    title: "Moteur de Simulation",
+                    desc: "ThreatService exécute 6 types d'attaques (Replay, Tampering, Brute Force, Threshold Manipulation, Unauthorized Enrollment, Session Hijacking) - backend/threat_service.py"
                 },
-                { 
-                    icon: BarChart3, 
-                    title: "Dashboard Métriques", 
-                    desc: "Visualisation Recharts : total_auths_1h, access_denied_24h, active_threats, timeline événements - frontend/pages/Dashboard.tsx" 
+                {
+                    icon: BarChart3,
+                    title: "Dashboard Métriques",
+                    desc: "Visualisation Recharts : total_auths_1h, access_denied_24h, active_threats, timeline événements - frontend/pages/Dashboard.tsx"
                 },
-                { 
-                    icon: Database, 
-                    title: "Journal d'Audit", 
-                    desc: "Logs immuables LogEntry (eventType, severity, sourceIp, timestamp ISO 8601), limit 1000 entrées - backend/audit_service.py:22-43" 
+                {
+                    icon: Database,
+                    title: "Journal d'Audit",
+                    desc: "Logs immuables LogEntry (eventType, severity, sourceIp, timestamp ISO 8601), limit 1000 entrées - backend/audit_service.py:22-43"
                 },
-                { 
-                    icon: ShieldAlert, 
-                    title: "Gestion Multi-Rôles", 
-                    desc: "UserRecord avec rôles (USER, ADMIN, SECURITY_ENGINEER), contrôle d'accès basé sur rôles dans endpoints" 
+                {
+                    icon: ShieldAlert,
+                    title: "Gestion Multi-Rôles",
+                    desc: "UserRecord avec rôles (USER, ADMIN, SECURITY_ENGINEER), contrôle d'accès basé sur rôles dans endpoints"
                 },
-                { 
-                    icon: Settings, 
-                    title: "Configuration Dynamique", 
-                    desc: "Seuil similarité ajustable (SIMILARITY_THRESHOLD=0.5), durée verrouillage configurable (LOCK_DURATION=60s)" 
+                {
+                    icon: Settings,
+                    title: "Configuration Dynamique",
+                    desc: "Seuil similarité ajustable (SIMILARITY_THRESHOLD=0.5), durée verrouillage configurable (LOCK_DURATION=60s)"
                 },
-                { 
-                    icon: Users, 
-                    title: "Enrôlement Sécurisé", 
-                    desc: "/auth/enroll vérifie liveness, empêche écrasement (embedding déjà présent), valide qualité géométrique - backend/main.py:252-304" 
+                {
+                    icon: Users,
+                    title: "Enrôlement Sécurisé",
+                    desc: "/auth/enroll vérifie liveness, empêche écrasement (embedding déjà présent), valide qualité géométrique - backend/main.py:252-304"
                 }
             ]
         }
