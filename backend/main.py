@@ -203,6 +203,12 @@ def execute_threat_simulation(sim: SimulationRequest, request: Request):
         security_level=sim.securityLevel,
         source_ip=client_ip
     )
+    
+    # Integration: Trigger actual system lock if ANY Critical Attack is blocked (High Security)
+    # This makes the simulation "real" by imposing consequences.
+    if not result['success'] and sim.securityLevel == "HIGH":
+         system_state.trigger_lock(f"Adversary Emulation: {sim.attackType} Blocked", client_ip)
+        
     return result
 
 @app.get("/health")
