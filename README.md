@@ -152,6 +152,24 @@ Frontend URL:
 
 ---
 
+### 6️⃣ Presentation Setup (Optional)
+
+To run the presentation slides:
+
+```bash
+cd presentation
+npm install
+npm run dev
+```
+
+Presentation URL:
+
+* [http://localhost:5173](http://localhost:5173)
+
+The presentation will automatically enter fullscreen mode on first user interaction. Use arrow keys or navigation controls to navigate between slides.
+
+---
+
 ## 🔐 Security Design Notes
 
 * All biometric processing is **server-side**

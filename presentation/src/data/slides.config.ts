@@ -491,12 +491,11 @@ export const slides: SlideConfig[] = [
             subtitle: 'Comparaison avec les Solutions Existantes',
             description: [
                 'BIOSEC s\'inspire et améliore les approches existantes en sécurité biométrique, tout en apportant des innovations spécifiques.',
-                'Contrairement aux solutions commerciales propriétaires (FaceID Apple, Windows Hello), BIOSEC offre une architecture ouverte et modulaire.',
+                'Contrairement aux solutions commerciales propriétaires (FaceID Apple), BIOSEC offre une architecture ouverte et modulaire.',
                 'Comparé aux systèmes académiques (OpenFace, FaceNet), BIOSEC intègre une couche de sécurité complète avec audit et détection d\'anomalies.'
             ],
             bullets: [
                 'FaceID (Apple) : Solution propriétaire, limitée à l\'écosystème Apple, pas d\'audit détaillé',
-                'Windows Hello : Intégration système, mais manque de flexibilité et de contrôle granulaire',
                 'OpenFace (CMU) : Open-source mais focus recherche, pas de production-ready security layer',
                 'FaceNet (Google) : Modèle performant mais nécessite infrastructure cloud, problèmes de privacy',
                 'BIOSEC : Combinaison unique de biométrie open-source, sécurité enterprise, et contrôle total'
