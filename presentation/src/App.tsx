@@ -185,6 +185,12 @@ const App: React.FC = () => {
                 title={slide.content.title}
                 subtitle={slide.content.subtitle}
                 agendaItems={slide.content.agendaItems}
+                onNavigate={(targetId) => {
+                  const targetIndex = slides.findIndex(s => s.id === targetId);
+                  if (targetIndex !== -1) {
+                    scrollToSlide(targetIndex);
+                  }
+                }}
               />
             );
 
@@ -231,7 +237,7 @@ const App: React.FC = () => {
                   imageSrc={slide.content.image?.src || ''}
                   imageAlt={slide.content.image?.alt || ''}
                   imageCaption={slide.content.image?.caption}
-                  reverse={slide.id === 'access' || slide.id === 'logs'}
+                  reverse={slide.content.image?.position === 'right'}
                 />
               </Slide>
             );
@@ -360,7 +366,6 @@ const App: React.FC = () => {
                     Démarrer la Démo
                   </button>
                 </div>
-                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-white/30 to-transparent"></div>
               </Slide>
             );
 

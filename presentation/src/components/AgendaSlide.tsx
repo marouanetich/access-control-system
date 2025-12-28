@@ -14,11 +14,18 @@ interface AgendaSlideProps {
     agendaItems?: {
         title: string;
         description: string;
+        targetId?: string;
     }[];
     onEnter?: () => void;
+    onNavigate?: (targetId: string) => void;
 }
 
-const AgendaSlide: React.FC<AgendaSlideProps> = ({ id, title, subtitle, agendaItems, onEnter }) => {
+const AgendaSlide: React.FC<AgendaSlideProps> = ({ id, title, subtitle, agendaItems, onEnter, onNavigate }) => {
+    const handleItemClick = (targetId?: string) => {
+        if (targetId && onNavigate) {
+            onNavigate(targetId);
+        }
+    };
     const containerRef = useRef<HTMLDivElement>(null);
     const itemsRef = useRef<HTMLDivElement>(null);
 
@@ -82,7 +89,8 @@ const AgendaSlide: React.FC<AgendaSlideProps> = ({ id, title, subtitle, agendaIt
                     {agendaItems?.map((item, index) => (
                         <div
                             key={index}
-                            className="agenda-item opacity-0 flex items-start gap-4 p-5 rounded-xl bg-white/90 backdrop-blur-sm border border-slate-200 hover:border-blue-500/50 transition-all shadow-lg hover:shadow-xl group"
+                            onClick={() => handleItemClick(item.targetId)}
+                            className={`agenda-item opacity-0 flex items-start gap-4 p-5 rounded-xl bg-white/90 backdrop-blur-sm border border-slate-200 hover:border-blue-500/50 transition-all shadow-lg hover:shadow-xl group ${item.targetId ? 'cursor-pointer' : ''}`}
                         >
                             <div className="agenda-checkmark flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg">
                                 <span className="text-lg font-black">{index + 1}</span>

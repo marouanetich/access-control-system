@@ -1,4 +1,4 @@
-import { Lock, ShieldAlert, Database, CloudCog, Activity, Network, AlertTriangle, BarChart3, Settings, Users, ScanFace } from 'lucide-react';
+import { ShieldAlert, Database, Activity, BarChart3, Settings, Users, ScanFace, Server, Monitor, Lock } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 export type SlideType = 'hero' | 'simple' | 'screenshot' | 'grid' | 'tech' | 'cta' | 'architecture' | 'metrics' | 'implementation' | 'hook' | 'agenda' | 'comparison' | 'takeaways' | 'divider';
@@ -16,6 +16,7 @@ export interface SlideConfig {
             src: string;
             alt: string;
             caption?: string;
+            position?: 'left' | 'right';
         };
         gridItems?: {
             icon: LucideIcon;
@@ -52,6 +53,7 @@ export interface SlideConfig {
         agendaItems?: {
             title: string;
             description: string;
+            targetId?: string;
         }[];
         comparison?: {
             title: string;
@@ -83,542 +85,330 @@ export const slides: SlideConfig[] = [
             ]
         }
     },
-    // 3. Agenda
+    // 2. Content Map
     {
-        id: 'agenda',
+        id: 'content-map',
         type: 'agenda',
         theme: 'bg-slide-agenda',
         content: {
             title: 'Plan de Présentation',
-            subtitle: 'Roadmap',
+            subtitle: 'Structure du Projet',
             agendaItems: [
-                { title: 'Contexte & Problématique', description: 'Pourquoi les systèmes traditionnels échouent' },
-                { title: 'Solution BIOSEC', description: 'Architecture et approche technique' },
-                { title: 'Preuves & Métriques', description: 'Performance et comparaisons' },
-                { title: 'Démonstration', description: 'Interfaces et fonctionnalités' },
-                { title: 'Travaux Futurs', description: 'Limitations et directions de recherche' }
+                { title: 'Vue d\'Ensemble', description: 'Architecture full-stack et composants principaux', targetId: 'overview' },
+                { title: 'Modèles de Reconnaissance', description: 'Pipeline ONNX : YuNet + ArcFace', targetId: 'models' },
+                { title: 'Fonctionnalités de Sécurité', description: 'Blocage 3 tentatives et anti-replay', targetId: 'security' },
+                { title: 'Implémentation Backend', description: 'FastAPI, services modulaires, endpoints', targetId: 'backend' },
+                { title: 'Implémentation Frontend', description: 'React, composants, polling temps réel', targetId: 'frontend' },
+                { title: 'Fonctionnalités Avancées', description: 'Simulation, audit, dashboard SOC', targetId: 'features' },
+                { title: 'Utilisation du Système', description: 'Guide avec captures d\'écran', targetId: 'howto-dashboard' }
             ]
         }
     },
-    // 4. Section Divider: Part 1
+    // 3. Project Overview (Architecture)
     {
-        id: 'divider-1',
-        type: 'divider',
-        theme: 'bg-slide-divider-1',
-        content: {
-            title: 'Partie I',
-            sectionTitle: 'Partie I',
-            subtitle: 'Contexte & Problématique',
-            sectionNumber: 1
-        }
-    },
-    // 5. Context
-    {
-        id: 'context',
-        type: 'simple',
+        id: 'overview',
+        type: 'architecture',
         theme: 'bg-slide-2',
         content: {
-            title: 'Évolution de la Sécurité',
-            subtitle: 'Pourquoi les clés statiques échouent',
+            title: 'Vue d\'Ensemble du Projet',
+            subtitle: 'Architecture Full-Stack',
             description: [
-                'Dans un environnement de travail décentralisé, le périmètre n\'est plus seulement physique. Les contrôles traditionnels reposant sur des badges statiques créent des vulnérabilités critiques.',
-                'Le système BIOSEC propose une défense active qui s\'adapte en temps réel aux menaces identifiées.',
-                'Avec une architecture Zero Trust et une authentification biométrique par reconnaissance faciale, nous transformons la sécurité d\'une approche réactive vers une défense proactive et intelligente.'
-            ]
-        }
-    },
-    // 6. Problem
-    {
-        id: 'problem',
-        type: 'simple',
-        theme: 'bg-slide-3',
-        content: {
-            title: 'Vulnérabilité à l\'Échelle',
-            subtitle: 'Le Coût de la Latence',
-            description: [
-                'Les systèmes hérités souffrent d\'un "retard d\'approvisionnement" — l\'écart dangereux entre le changement de statut d\'un employé et la révocation de ses accès.',
-                'Sans intégration de signaux en temps réel, les équipes de sécurité sont réactives, analysant des logs après une faille au lieu de la prévenir.',
-                'Les attaques modernes exploitent ces faiblesses : rejeu de sessions, usurpation biométrique, et manipulation de seuils de confiance.'
-            ],
-            bullets: [
-                'Les identifiants statiques sont facilement clonés ou volés (badges RFID, codes PIN).',
-                'Les procédures de verrouillage manuel prennent des minutes, pas des millisecondes.',
-                'Manque de visibilité sur les accès "fantômes" et les sessions orphelines.',
-                'Absence de détection de vivacité (liveness) permettant les attaques par présentation.',
-                'Pas de corrélation entre les événements de sécurité pour détecter les patterns d\'attaque.'
-            ]
-        }
-    },
-    // 7. Why Now?
-    {
-        id: 'why-now',
-        type: 'simple',
-        theme: 'bg-slide-why-now',
-        content: {
-            title: 'Pourquoi Maintenant ?',
-            subtitle: 'L\'Urgence du Moment',
-            description: [
-                'La convergence de plusieurs facteurs crée une fenêtre d\'opportunité unique pour déployer des systèmes de sécurité biométriques avancés.',
-                'L\'adoption massive du travail hybride a multiplié les points d\'entrée, tandis que les réglementations (RGPD, ISO 27001) exigent une traçabilité complète.',
-                'Les avancées récentes en computer vision (ArcFace, ONNX) rendent la biométrie faciale plus précise et accessible que jamais.'
-            ],
-            bullets: [
-                'Augmentation de 38% des attaques de sécurité en 2023 (IBM Security Report)',
-                'Coût moyen d\'une violation de données : 4.45M$ (IBM Cost of Data Breach 2023)',
-                'Exigences réglementaires croissantes (RGPD, ISO 27001, NIST)',
-                'Maturité technologique : modèles ONNX optimisés pour production',
-                'Demande du marché : 67% des entreprises cherchent des alternatives aux mots de passe'
-            ]
-        }
-    },
-    // 8. Section Divider: Part 2
-    {
-        id: 'divider-2',
-        type: 'divider',
-        theme: 'bg-slide-divider-2',
-        content: {
-            title: 'Partie II',
-            sectionTitle: 'Partie II',
-            subtitle: 'Solution BIOSEC',
-            sectionNumber: 2
-        }
-    },
-    // 9. Solution Overview
-    {
-        id: 'solution',
-        type: 'grid',
-        theme: 'bg-slide-4',
-        content: {
-            title: 'Défense Orchestrée',
-            subtitle: 'L\'Architecture Biosec',
-            gridItems: [
-                { icon: Lock, title: "Cœur Zero Trust", desc: "Moteur de politique par défaut qui réévalue la confiance à chaque demande d'accès. Chaque requête est traitée comme suspecte jusqu'à preuve du contraire." },
-                { icon: CloudCog, title: "Sync en Temps Réel", desc: "La propagation à la périphérie garantit une cohérence globale instantanée. Les changements de statut se propagent en <100ms à travers l'infrastructure." },
-                { icon: ScanFace, title: "Authentification Biométrique", desc: "Intégration transparente de la reconnaissance faciale avec les identifiants traditionnels. Détection de vivacité intégrée pour prévenir les attaques par présentation." },
-                { icon: ShieldAlert, title: "Détection d'Anomalies", desc: "Moteur d'analyse comportementale qui identifie les patterns suspects et déclenche des verrouillages automatiques." },
-                { icon: Database, title: "Audit Immutable", desc: "Journal cryptographiquement signé de toutes les interactions. Conformité ISO 27001 avec traçabilité complète." },
-                { icon: Activity, title: "Réponse Automatique", desc: "Système de lockdown intelligent qui isole les menaces en millisecondes avec alertes sonores et visuelles." }
-            ]
-        }
-    },
-    // 10. Architecture
-    {
-        id: 'architecture',
-        type: 'architecture',
-        theme: 'bg-slide-5',
-        content: {
-            title: 'Architecture Système',
-            subtitle: 'Stack Technique Moderne',
-            description: [
-                'BIOSEC est construit sur une architecture en couches qui sépare les préoccupations et garantit la scalabilité et la maintenabilité.'
+                'BIOSEC est une plateforme de contrôle d\'accès biométrique avec traitement serveur-side et interface React en temps réel.'
             ],
             architecture: {
                 layers: [
                     {
                         name: 'Frontend React',
-                        description: 'Interface utilisateur réactive avec React 19, TypeScript et Tailwind CSS. Gestion d\'état optimisée pour les mises à jour en temps réel.',
-                        technologies: ['React 19', 'TypeScript', 'Vite', 'Tailwind CSS', 'Recharts', 'GSAP']
+                        description: 'Interface utilisateur avec Dashboard, Access Control, Threat Simulation, Security Logs. Polling temps réel et alertes audio.',
+                        technologies: ['React 19', 'TypeScript', 'Vite', 'Recharts', 'Lucide Icons']
                     },
                     {
-                        name: 'API Backend',
-                        description: 'Service RESTful avec FastAPI pour la logique métier, validation Pydantic, et gestion asynchrone des requêtes.',
-                        technologies: ['FastAPI', 'Python 3.9+', 'Uvicorn', 'Pydantic', 'JWT']
+                        name: 'API Backend FastAPI',
+                        description: 'Endpoints REST pour authentification, enrôlement, vérification. Gestion d\'état in-memory et services modulaires.',
+                        technologies: ['FastAPI', 'Uvicorn', 'Pydantic', 'CORS']
                     },
                     {
                         name: 'Moteur Biométrique',
-                        description: 'Pipeline de traitement d\'images avec OpenCV, modèles ONNX (ArcFace ResNet50, YuNet), et calcul de similarité cosinus.',
-                        technologies: ['OpenCV', 'ONNX Runtime', 'ArcFace (ResNet50)', 'YuNet', 'NumPy', 'Cosine Similarity']
+                        description: 'FaceService charge les modèles ONNX au démarrage. Pipeline : détection → liveness → embedding → matching 1:N.',
+                        technologies: ['OpenCV', 'ONNX Runtime', 'ArcFace', 'YuNet']
                     },
                     {
                         name: 'Sécurité & Audit',
-                        description: 'Chiffrement AES-256-GCM, hachage HMAC-SHA256, gestion de sessions, et journalisation immuable.',
-                        technologies: ['AES-256-GCM', 'HMAC-SHA256', 'JWT Rotation', 'Audit Logs']
+                        description: 'SystemState gère le verrouillage (3 tentatives). AuditService enregistre tous les événements avec IP source.',
+                        technologies: ['SystemState', 'AuditService', 'Nonce Validation']
                     }
                 ]
             }
         }
     },
-    // 11. Dashboard
+    // 4. Face Recognition Models (Grid)
     {
-        id: 'dashboard',
-        type: 'screenshot',
-        theme: 'bg-slide-6',
+        id: 'models',
+        type: 'grid',
+        theme: 'bg-slide-3',
         content: {
-            title: 'Conscience Opérationnelle',
-            subtitle: 'Le Centre de Commande',
-            description: [
-                'Une interface unique pour les opérations de sécurité globales. Le dashboard agrège la télémétrie de milliers de capteurs en intelligence actionnable.',
-                'Les opérateurs visualisent l\'état du système, les menaces actives et les entrées en temps réel sans menus complexes.'
-            ],
-            image: {
-                src: '/assets/01_dashboard.png',
-                alt: 'Interface Dashboard Biosec',
-                caption: 'Fig 1.1: Moniteur de statut global montrant les zones actives, métriques en temps réel, et alertes de sécurité.'
-            }
+            title: 'Modèles de Reconnaissance Faciale',
+            subtitle: 'Pipeline ONNX : YuNet + ArcFace',
+            gridItems: [
+                {
+                    icon: ScanFace,
+                    title: 'YuNet Détecteur',
+                    desc: 'face_detection_yunet_2023mar.onnx - OpenCV FaceDetectorYN (320x320, score_threshold=0.75). Détecte les visages et retourne bounding boxes avec landmarks - backend/face_service.py:38'
+                },
+                {
+                    icon: Activity,
+                    title: 'ArcFace Reconnaissance',
+                    desc: 'w600k_r50.onnx - ResNet50 via ONNX Runtime. Extrait embeddings 512D normalisés depuis faces alignées 112x112 - backend/face_service.py:55, 189-195'
+                },
+                {
+                    icon: ShieldAlert,
+                    title: 'Vérifications Qualité',
+                    desc: 'Liveness : blur (Laplacian > 20), luminosité (40-220). Géométrie : taille >15% image, centrage, marges - backend/face_service.py:69-162'
+                },
+                {
+                    icon: Lock,
+                    title: 'Matching 1:N',
+                    desc: 'Similarité cosinus entre embeddings (SIMILARITY_THRESHOLD=0.5). Recherche dans users_db pour trouver meilleur match - backend/main.py:359-369'
+                }
+            ]
         }
     },
-    // 12. Access Control
+    // 5. Security Features (Simple with bullets)
     {
-        id: 'access',
+        id: 'security',
+        type: 'simple',
+        theme: 'bg-slide-4',
+        content: {
+            title: 'Fonctionnalités de Sécurité',
+            subtitle: 'Blocage après 3 Tentatives et Protection Anti-Replay',
+            description: [
+                'Le système implémente un mécanisme de verrouillage automatique et des protections contre les attaques par rejeu.'
+            ],
+            bullets: [
+                'Blocage après 3 échecs : SystemState.record_failure() incrémente, trigger_lock() si failures[key] >= FAILURE_THRESHOLD (3) - backend/main.py:83-99',
+                'Verrouillage global 60s : LOCK_DURATION=60s, toutes requêtes bloquées via check_system_lock() - backend/main.py:143-149',
+                'Protection anti-replay : Nonces UUID par /auth/challenge, validés dans /auth/verify, supprimés après usage - backend/main.py:218-226, 324-336',
+                'Détection vivacité serveur-side : Blur (Laplacian), luminosité, qualité avant matching - backend/face_service.py:69-89',
+                'Tracking IP/username : system_state.record_failure(client_ip) et record_failure(username) pour détecter usurpation',
+                'Audit logging : Tous événements (VERIFY_SUCCESS, VERIFY_FAIL, SYSTEM_LOCKDOWN) avec IP source - backend/audit_service.py'
+            ]
+        }
+    },
+    // 6. Backend Implementation (Tech Stack)
+    {
+        id: 'backend',
+        type: 'tech',
+        theme: 'bg-slide-5',
+        content: {
+            title: 'Implémentation Backend',
+            subtitle: 'Stack Technique et Architecture',
+            description: [
+                'Le backend FastAPI est structuré en services modulaires avec gestion d\'état in-memory et endpoints REST.'
+            ],
+            techCategories: [
+                {
+                    name: 'Framework & Runtime',
+                    items: ['FastAPI 0.109.0', 'Uvicorn 0.27.0', 'Python 3.9+', 'Pydantic 2.6.0']
+                },
+                {
+                    name: 'Computer Vision',
+                    items: ['OpenCV 4.9.0', 'ONNX Runtime 1.17.0', 'NumPy 1.26.3']
+                },
+                {
+                    name: 'Services Principaux',
+                    items: ['FaceService (modèles ONNX)', 'AuditService (logs)', 'SystemState (verrouillage)', 'ThreatService (simulation)']
+                },
+                {
+                    name: 'Endpoints API',
+                    items: ['/auth/challenge (nonce)', '/auth/register (création)', '/auth/enroll (enrôlement)', '/auth/verify (vérification 1:N)', '/api/status (lockout)', '/api/metrics (dashboard)']
+                },
+                {
+                    name: 'Gestion État',
+                    items: ['users_db (Dict[str, UserRecord])', 'nonces_db (Dict[str, float])', 'system_state (SystemState)', 'Nettoyage nonces expirés (>60s)']
+                }
+            ]
+        }
+    },
+    // 7. Frontend Implementation (Grid)
+    {
+        id: 'frontend',
+        type: 'grid',
+        theme: 'bg-slide-6',
+        content: {
+            title: 'Implémentation Frontend',
+            subtitle: 'Interface React avec Visualisation Temps Réel',
+            gridItems: [
+                {
+                    icon: Monitor,
+                    title: 'Stack Technique',
+                    desc: 'React 19.2.3, TypeScript 5.8.2, Vite 6.2.0, Recharts 3.5.1, Lucide React - frontend/package.json'
+                },
+                {
+                    icon: Activity,
+                    title: 'Pages Principales',
+                    desc: 'Dashboard (métriques), AccessControl (enrôlement/vérification), AttackSimulation, SecurityLogs - frontend/pages/'
+                },
+                {
+                    icon: Users,
+                    title: 'Composants Réutilisables',
+                    desc: 'BiometricVisualizer (caméra), SystemLockdown (alerte), Layout (navigation sidebar) - frontend/components/'
+                },
+                {
+                    icon: Server,
+                    title: 'Services API',
+                    desc: 'BackendAPI (appels REST vers FastAPI), MockBackend (fallback dev) - frontend/services/api.ts'
+                },
+                {
+                    icon: BarChart3,
+                    title: 'Polling Temps Réel',
+                    desc: 'Dashboard poll /api/metrics (5s), /api/logs (2s), /api/status (1s) pour lockout - frontend/pages/Dashboard.tsx:34-44'
+                },
+                {
+                    icon: ShieldAlert,
+                    title: 'Alertes Audio',
+                    desc: 'Web Audio API déclenché lors verrouillage (oscillateur 440Hz) - frontend/App.tsx:40-111'
+                }
+            ]
+        }
+    },
+    // 8. Additional Features (Grid)
+    {
+        id: 'features',
+        type: 'grid',
+        theme: 'bg-slide-11',
+        content: {
+            title: 'Fonctionnalités Additionnelles',
+            subtitle: 'Simulation, Audit, et Dashboard SOC',
+            gridItems: [
+                { 
+                    icon: Activity, 
+                    title: "Moteur de Simulation", 
+                    desc: "ThreatService exécute 6 types d'attaques (Replay, Tampering, Brute Force, Threshold Manipulation, Unauthorized Enrollment, Session Hijacking) - backend/threat_service.py" 
+                },
+                { 
+                    icon: BarChart3, 
+                    title: "Dashboard Métriques", 
+                    desc: "Visualisation Recharts : total_auths_1h, access_denied_24h, active_threats, timeline événements - frontend/pages/Dashboard.tsx" 
+                },
+                { 
+                    icon: Database, 
+                    title: "Journal d'Audit", 
+                    desc: "Logs immuables LogEntry (eventType, severity, sourceIp, timestamp ISO 8601), limit 1000 entrées - backend/audit_service.py:22-43" 
+                },
+                { 
+                    icon: ShieldAlert, 
+                    title: "Gestion Multi-Rôles", 
+                    desc: "UserRecord avec rôles (USER, ADMIN, SECURITY_ENGINEER), contrôle d'accès basé sur rôles dans endpoints" 
+                },
+                { 
+                    icon: Settings, 
+                    title: "Configuration Dynamique", 
+                    desc: "Seuil similarité ajustable (SIMILARITY_THRESHOLD=0.5), durée verrouillage configurable (LOCK_DURATION=60s)" 
+                },
+                { 
+                    icon: Users, 
+                    title: "Enrôlement Sécurisé", 
+                    desc: "/auth/enroll vérifie liveness, empêche écrasement (embedding déjà présent), valide qualité géométrique - backend/main.py:252-304" 
+                }
+            ]
+        }
+    },
+    // 9. How to Use - Dashboard Screenshot
+    {
+        id: 'howto-dashboard',
         type: 'screenshot',
         theme: 'bg-slide-7',
         content: {
-            title: 'Moteur de Politique Granulaire',
-            subtitle: 'Gestion de Précision',
+            title: 'Utilisation : Dashboard',
+            subtitle: 'Vue d\'Ensemble des Métriques',
             description: [
-                'Définissez l\'accès par rôle et par contexte. Biosec permet des surcharges granulaires, des élévations temporaires et des révocations instantanées.',
-                'Authentification biométrique par reconnaissance faciale (ArcFace) avec détection de vivacité intégrée.'
+                'Le Dashboard affiche les métriques de sécurité en temps réel avec graphiques interactifs et timeline des événements.',
+                'Navigation : Clic sur "Overview" dans la sidebar pour accéder aux statistiques globales.'
             ],
             image: {
-                src: '/assets/02_access_control.png',
-                alt: 'Configuration Contrôle d\'Accès',
-                caption: 'Fig 1.2: Interface d\'enrôlement et authentification biométrique avec visualisation en temps réel.'
+                src: '/assets/01_dashboard.png',
+                alt: 'Dashboard BIOSEC avec métriques',
+                caption: 'Dashboard montrant total_auths_1h, access_denied_24h, active_threats, et timeline d\'événements (frontend/pages/Dashboard.tsx)',
+                position: 'left'
             }
         }
     },
-    // 13. Threat Sim
+    // 10. How to Use - Access Control Screenshot
     {
-        id: 'threats',
+        id: 'howto-access',
         type: 'screenshot',
         theme: 'bg-slide-8',
         content: {
-            title: 'Émulation d\'Adversaire',
-            subtitle: 'Test de Résilience Proactif',
+            title: 'Utilisation : Contrôle d\'Accès',
+            subtitle: 'Enrôlement et Vérification Faciale',
             description: [
-                'La sécurité ne vaut que par son dernier test. Notre moteur de simulation permet aux équipes de jouer des scénarios : force brute, rejeu, usurpation, manipulation de seuils.',
-                'Scénarios supportés : Replay Attack, Session Hijacking, Brute Force, Threshold Manipulation, Unauthorized Enrollment.'
+                'Page Access Control permet l\'enrôlement de nouveaux utilisateurs et la vérification faciale en temps réel.',
+                'Flux : 1) Register (créer identité), 2) Enroll (capturer visage), 3) Verify (authentification) - frontend/pages/AccessControl.tsx'
+            ],
+            image: {
+                src: '/assets/02_access_control.png',
+                alt: 'Interface Contrôle d\'Accès',
+                caption: 'Interface d\'enrôlement et vérification avec caméra, visualisation biométrique, et feedback en temps réel',
+                position: 'right'
+            }
+        }
+    },
+    // 11. How to Use - Threat Simulation Screenshot
+    {
+        id: 'howto-threats',
+        type: 'screenshot',
+        theme: 'bg-slide-9',
+        content: {
+            title: 'Utilisation : Simulation de Menaces',
+            subtitle: 'Test de Résilience',
+            description: [
+                'Le moteur de simulation permet d\'émuler différents types d\'attaques pour tester les défenses du système.',
+                'Sélection : Type d\'attaque (Replay, Tampering, Brute Force, etc.), utilisateur cible, niveau sécurité (LOW/HIGH) - frontend/pages/AttackSimulation.tsx'
             ],
             image: {
                 src: '/assets/03_threat_sim.png',
                 alt: 'Interface Simulation de Menaces',
-                caption: 'Fig 1.3: Interface de simulation d\'attaques avec profils configurables et métriques de réponse.'
+                caption: 'Interface de simulation avec sélection d\'attaque, profils de sécurité, et résultats de test (backend/threat_service.py)',
+                position: 'left'
             }
         }
     },
-    // 14. Audit Logs
+    // 12. How to Use - Audit Logs Screenshot
     {
-        id: 'logs',
+        id: 'howto-logs',
         type: 'screenshot',
-        theme: 'bg-slide-9',
+        theme: 'bg-slide-10',
         content: {
-            title: 'Registre Immuable',
-            subtitle: 'Pistes d\'Audit Forensiques',
+            title: 'Utilisation : Journal d\'Audit',
+            subtitle: 'Traçabilité Complète',
             description: [
-                'Chaque interaction est signée cryptographiquement. Le journal d\'activité fournit un historique inaltérable des accès et des actions administratives.',
-                'Essentiel pour la conformité ISO 27001, offrant une transparence totale sur la gouvernance du système.'
+                'Le journal d\'audit enregistre tous les événements de sécurité avec timestamp, sévérité, IP source, et détails.',
+                'Filtrage : Par type d\'événement, sévérité (INFO, WARNING, CRITICAL), utilisateur, période - frontend/pages/SecurityLogs.tsx'
             ],
             image: {
                 src: '/assets/04_audit_logs.png',
-                alt: 'Interface Logs d\'Audit',
-                caption: 'Fig 1.4: Journal d\'audit avec événements signés cryptographiquement et filtres avancés.'
+                alt: 'Interface Journal d\'Audit',
+                caption: 'Journal d\'audit avec événements signés cryptographiquement, filtres avancés, et export (backend/audit_service.py)',
+                position: 'right'
             }
         }
     },
-    // 15. Metrics with Comparison
-    {
-        id: 'metrics',
-        type: 'metrics',
-        theme: 'bg-slide-10',
-        content: {
-            title: 'Performance & Fiabilité',
-            subtitle: 'Métriques Système avec Benchmarks',
-            description: [
-                'BIOSEC dépasse les standards NIST et ISO pour les systèmes biométriques, avec des performances comparables aux solutions commerciales de niveau entreprise.'
-            ],
-            metrics: [
-                {
-                    label: 'Taux de Fausse Acceptation (FAR)',
-                    value: '< 0.1%',
-                    trend: 'down',
-                    description: 'Moins de 0.1% (Standard NIST: < 0.01%, BIOSEC: 0.08%) - Seuil de similarité cosinus optimisé (≥ 0.85)'
-                },
-                {
-                    label: 'Taux de Faux Rejet (FRR)',
-                    value: '< 2%',
-                    trend: 'down',
-                    description: '1.8% (Standard industriel: < 5%) - Expérience utilisateur fluide avec rejet minimal'
-                },
-                {
-                    label: 'Latence d\'Authentification',
-                    value: '< 200ms',
-                    trend: 'stable',
-                    description: 'Moyenne: 180ms (vs 500-800ms systèmes traditionnels) - Capture, traitement ONNX, vérification'
-                },
-                {
-                    label: 'Détection de Vivacité',
-                    value: '99.5%',
-                    trend: 'up',
-                    description: 'Taux de détection des tentatives d\'usurpation (photos, vidéos, masques) - Supérieur à 95% requis'
-                },
-                {
-                    label: 'Disponibilité Système',
-                    value: '99.9%',
-                    trend: 'stable',
-                    description: 'Uptime garanti (SLA entreprise) - Architecture asynchrone et gestion d\'erreurs robuste'
-                },
-                {
-                    label: 'Temps de Verrouillage',
-                    value: '< 50ms',
-                    trend: 'stable',
-                    description: 'Réaction instantanée (vs 2-5s systèmes manuels) - Alertes sonores et visuelles'
-                }
-            ]
-        }
-    },
-    // 16. Comparison Slide
-    {
-        id: 'comparison',
-        type: 'comparison',
-        theme: 'bg-slide-comparison',
-        content: {
-            title: 'BIOSEC vs. Systèmes Traditionnels',
-            subtitle: 'Analyse Comparative',
-            comparison: {
-                title: 'Comparaison des Capacités',
-                items: [
-                    {
-                        feature: 'Détection de Vivacité',
-                        biosec: true,
-                        traditional: false
-                    },
-                    {
-                        feature: 'Réponse en Temps Réel',
-                        biosec: '< 200ms',
-                        traditional: '2-5 secondes'
-                    },
-                    {
-                        feature: 'Audit Cryptographique',
-                        biosec: true,
-                        traditional: 'Partiel'
-                    },
-                    {
-                        feature: 'Zero Trust Architecture',
-                        biosec: true,
-                        traditional: false
-                    },
-                    {
-                        feature: 'Simulation d\'Attaques',
-                        biosec: true,
-                        traditional: false
-                    },
-                    {
-                        feature: 'Taux FAR',
-                        biosec: '< 0.1%',
-                        traditional: '0.5-2%'
-                    }
-                ]
-            }
-        }
-    },
-    // 17. Tech Stack
-    {
-        id: 'tech',
-        type: 'tech',
-        theme: 'bg-slide-11',
-        content: {
-            title: '🔧 Technologies Utilisées',
-            subtitle: 'Fondation Technique Moderne',
-            description: [
-                'Construit sur une stack haute performance conçue pour une latence minimale et une fiabilité maximale. Chaque technologie a été sélectionnée pour ses performances et sa maturité dans l\'écosystème de sécurité.'
-            ],
-            techCategories: [
-                {
-                    name: 'Frontend',
-                    items: ['React 19', 'TypeScript', 'Vite', 'Tailwind CSS', 'Recharts', 'GSAP', 'Lucide Icons']
-                },
-                {
-                    name: 'Backend',
-                    items: ['FastAPI', 'Python 3.9+', 'Uvicorn', 'Pydantic', 'JWT', 'HMAC-SHA256']
-                },
-                {
-                    name: 'Computer Vision / AI',
-                    items: ['OpenCV', 'ONNX Runtime', 'ArcFace (ResNet50)', 'YuNet Face Detector', 'NumPy', 'Cosine Similarity']
-                },
-                {
-                    name: 'Sécurité',
-                    items: ['AES-256-GCM', 'HMAC-SHA256', 'JWT Rotation', 'Audit Logs']
-                },
-                {
-                    name: 'DevOps & Outils',
-                    items: ['Git', 'Environnements Virtuels (venv)', 'TypeScript', 'ESLint']
-                }
-            ]
-        }
-    },
-    // 18. Key Features - Consolidated Part 1
-    {
-        id: 'features-core',
-        type: 'grid',
-        theme: 'bg-slide-12',
-        content: {
-            title: 'Fonctionnalités Principales',
-            subtitle: 'Authentification, Sécurité & Surveillance',
-            gridItems: [
-                { icon: ScanFace, title: "Vérification Faciale", desc: "Correspondance biométrique sécurisée côté serveur par similarité cosinus (ArcFace ResNet50). Extraction d'embeddings 512D avec seuil de confiance ≥ 0.85." },
-                { icon: Activity, title: "Détection de Vivacité", desc: "Pipeline d'analyse pour détecter les tentatives d'usurpation. Analyse de variance d'image, détection de flou, reflets, et masques 3D." },
-                { icon: Lock, title: "Journal d'Audit Immutable", desc: "Enregistrements cryptographiquement signés (HMAC-SHA256) de toutes les tentatives d'accès. Conformité ISO 27001 avec traçabilité complète." },
-                { icon: ShieldAlert, title: "Lockdown Automatique", desc: "Réponse d'urgence en < 50ms avec alertes sonores (Web Audio API) et gel de l'UI. Blocage automatique après 3 tentatives d'usurpation." },
-                { icon: CloudCog, title: "Gestion de Session Sécurisée", desc: "JWT rotation et validation de session avec binding IP/User-Agent. Prévention des détournements de session." },
-                { icon: AlertTriangle, title: "Détection d'Anomalies", desc: "Moteur d'analyse comportementale identifiant les patterns suspects : tentatives répétées, géolocalisation anormale, horaires inhabituels." }
-            ]
-        }
-    },
-    // 19. Key Features - Consolidated Part 2
-    {
-        id: 'features-advanced',
-        type: 'grid',
-        theme: 'bg-slide-13',
-        content: {
-            title: 'Fonctionnalités Avancées',
-            subtitle: 'Simulation, Analytique & Gestion',
-            gridItems: [
-                { icon: Activity, title: "Moteur de Simulation", desc: "Environnement contrôlé pour émuler 6 types d'attaques : Replay, Tampering, Brute Force, Threshold Manipulation, Unauthorized Enrollment, Session Hijacking." },
-                { icon: BarChart3, title: "Métriques Temps Réel", desc: "Suivi en direct des métriques biométriques (FAR, FRR, seuil de confiance) avec graphiques interactifs et mise à jour automatique." },
-                { icon: Database, title: "Chronologie d'Activité", desc: "Visualisation chronologique des événements de sécurité avec filtrage par type, sévérité, utilisateur, et période temporelle." },
-                { icon: Settings, title: "Configuration Dynamique", desc: "Ajustement en temps réel des seuils de confiance, politiques d'accès, et paramètres de sécurité sans redémarrage." },
-                { icon: Network, title: "Rate Limiting Intelligent", desc: "Protection contre les attaques par force brute avec limitation de débit par IP/utilisateur et délai exponentiel." },
-                { icon: Users, title: "Gestion Multi-Utilisateurs", desc: "Support de rôles (USER, ADMIN, SECURITY_ENGINEER) avec permissions granulaires. Enrôlement et révocation instantanés." }
-            ]
-        }
-    },
-    // 20. Related Work
-    {
-        id: 'related-work',
-        type: 'simple',
-        theme: 'bg-slide-related',
-        content: {
-            title: 'Travaux Connexes',
-            subtitle: 'Comparaison avec les Solutions Existantes',
-            description: [
-                'BIOSEC s\'inspire et améliore les approches existantes en sécurité biométrique, tout en apportant des innovations spécifiques.',
-                'Contrairement aux solutions commerciales propriétaires (FaceID Apple), BIOSEC offre une architecture ouverte et modulaire.',
-                'Comparé aux systèmes académiques (OpenFace, FaceNet), BIOSEC intègre une couche de sécurité complète avec audit et détection d\'anomalies.'
-            ],
-            bullets: [
-                'FaceID (Apple) : Solution propriétaire, limitée à l\'écosystème Apple, pas d\'audit détaillé',
-                'OpenFace (CMU) : Open-source mais focus recherche, pas de production-ready security layer',
-                'FaceNet (Google) : Modèle performant mais nécessite infrastructure cloud, problèmes de privacy',
-                'BIOSEC : Combinaison unique de biométrie open-source, sécurité enterprise, et contrôle total'
-            ]
-        }
-    },
-    // 21. Limitations
-    {
-        id: 'limitations',
-        type: 'simple',
-        theme: 'bg-slide-limitations',
-        content: {
-            title: 'Limitations & Défis',
-            subtitle: 'Honnêteté Académique',
-            description: [
-                'Comme tout système de recherche, BIOSEC présente des limitations qui doivent être reconnues et adressées dans les travaux futurs.'
-            ],
-            bullets: [
-                'Dépendance à la qualité de la caméra : performances dégradées en faible luminosité (< 50 lux)',
-                'Latence réseau : dépend de la connexion pour la synchronisation temps réel (améliorable avec edge computing)',
-                'Base de données limitée : tests effectués sur dataset de 1000+ utilisateurs, validation à grande échelle nécessaire',
-                'Coût computationnel : traitement ONNX nécessite GPU pour performances optimales (> 1000 req/s)',
-                'Privacy concerns : stockage local des templates biométriques, mais conformité RGPD à valider formellement',
-                'Vulnérabilité aux attaques avancées : deepfakes sophistiqués nécessitent détection de vivacité améliorée'
-            ]
-        }
-    },
-    // 22. Future Work
-    {
-        id: 'future-work',
-        type: 'simple',
-        theme: 'bg-slide-future',
-        content: {
-            title: 'Travaux Futurs',
-            subtitle: 'Directions de Recherche',
-            description: [
-                'Plusieurs axes de recherche prometteurs émergent de ce travail, ouvrant la voie à des améliorations significatives.'
-            ],
-            bullets: [
-                'Intégration de l\'apprentissage fédéré pour améliorer les modèles sans compromettre la privacy',
-                'Développement d\'un module de détection de deepfakes utilisant des réseaux adversariaux (GANs)',
-                'Optimisation edge computing pour réduire la latence et la dépendance réseau',
-                'Extension multi-modale : combinaison visage + voix + comportement pour sécurité renforcée',
-                'Validation à grande échelle : déploiement pilote dans environnement réel (10000+ utilisateurs)',
-                'Analyse formelle de sécurité : preuves mathématiques de propriétés de sécurité (model checking)'
-            ]
-        }
-    },
-    // 23. Implementation
-    {
-        id: 'implementation',
-        type: 'implementation',
-        theme: 'bg-slide-15',
-        content: {
-            title: 'Implémentation',
-            subtitle: 'Phases de Développement',
-            description: [
-                'Le développement de BIOSEC a suivi une approche méthodique avec des phases clairement définies.'
-            ],
-            implementation: [
-                {
-                    phase: 'Phase 1: Infrastructure',
-                    description: 'Mise en place de l\'architecture frontend/backend, configuration des outils de développement, et intégration des bibliothèques de base.',
-                    technologies: ['React Setup', 'FastAPI Structure', 'TypeScript Config', 'Tailwind CSS']
-                },
-                {
-                    phase: 'Phase 2: Biométrie',
-                    description: 'Intégration des modèles ONNX (ArcFace, YuNet), implémentation du pipeline de traitement d\'images, et calcul de similarité cosinus.',
-                    technologies: ['OpenCV Integration', 'ONNX Runtime', 'Embedding Extraction', 'Cosine Similarity']
-                },
-                {
-                    phase: 'Phase 3: Sécurité',
-                    description: 'Implémentation du chiffrement, gestion des sessions JWT, détection de vivacité, et système d\'audit cryptographique.',
-                    technologies: ['AES-256-GCM', 'HMAC-SHA256', 'JWT Management', 'Liveness Detection']
-                },
-                {
-                    phase: 'Phase 4: Interface',
-                    description: 'Développement des composants UI (Dashboard, Access Control, Attack Simulation, Security Logs) avec animations et feedback visuel.',
-                    technologies: ['React Components', 'Recharts', 'GSAP Animations', 'Responsive Design']
-                },
-                {
-                    phase: 'Phase 5: Simulation',
-                    description: 'Moteur de simulation d\'attaques avec profils configurables, métriques de performance, et documentation des contre-mesures.',
-                    technologies: ['Attack Engine', 'Metrics Collection', 'Automated Testing']
-                }
-            ]
-        }
-    },
-    // 24. Key Takeaways
-    {
-        id: 'takeaways',
-        type: 'takeaways',
-        theme: 'bg-slide-takeaways',
-        content: {
-            title: 'Points Clés à Retenir',
-            subtitle: 'Résumé Exécutif',
-            takeaways: [
-                'BIOSEC résout le problème critique de latence dans les systèmes de sécurité traditionnels avec une réponse < 200ms',
-                'Architecture Zero Trust avec authentification biométrique par reconnaissance faciale et détection de vivacité intégrée',
-                'Performance supérieure aux standards NIST : FAR < 0.1%, FRR < 2%, disponibilité 99.9%',
-                'Système de sécurité complet : audit immutable, détection d\'anomalies, simulation d\'attaques, et lockdown automatique',
-                'Solution open-source et modulaire, contrairement aux alternatives propriétaires, avec contrôle total sur la sécurité',
-                'Base solide pour travaux futurs : edge computing, détection de deepfakes, et validation à grande échelle'
-            ]
-        }
-    },
-    // 25. CTA Enhanced
+    // 13. CTA
     {
         id: 'cta',
         type: 'cta',
         theme: 'bg-slide-17',
         content: {
-            title: 'Prêt à Déployer ?',
-            subtitle: 'Prochaines Étapes',
+            title: 'Démonstration',
+            subtitle: 'Code Source et Documentation',
             description: [
-                'BIOSEC est prêt pour le déploiement pilote et la validation à grande échelle.',
-                'Contactez-nous pour une démonstration ou une collaboration de recherche.'
+                'Le projet est disponible avec documentation complète et instructions de déploiement.'
             ],
             bullets: [
-                'Démo interactive disponible sur demande',
-                'Code source disponible pour évaluation académique',
-                'Documentation technique complète',
-                'Support pour intégration et déploiement'
+                'Repository GitHub : https://github.com/marouanetich/access-control-system',
+                'Documentation : README.md avec instructions backend/frontend',
+                'Modèles ONNX requis : face_detection_yunet_2023mar.onnx, w600k_r50.onnx',
+                'Stack validée : Python 3.9+, Node.js 18+, FastAPI, React 19'
             ]
         }
     }
